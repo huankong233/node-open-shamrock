@@ -1,0 +1,35 @@
+{
+  "name": "node-open-shamrock",
+  "version": "0.0.1",
+  "description": "OpenShamrock SDK for Node",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/**/*"
+  ],
+  "keywords": [
+    "websocket",
+    "qq-robot",
+    "cq-websocket",
+    "OpenShamrock"
+  ],
+  "author": "huan_kong",
+  "repository": "https://github.com/huankong233/node-open-shamrock",
+  "bugs": {
+    "url": "https://github.com/huankong233/node-open-shamrock/issues"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx test.ts"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.3.3"
+  }
+}
