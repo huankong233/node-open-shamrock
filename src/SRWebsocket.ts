@@ -14,7 +14,7 @@ import type {
 import WebSocket, { Data } from 'ws'
 import { randomUUID } from 'crypto'
 import { SREventBus } from './SREventBus.ts'
-import { logger } from './utils.ts'
+import { JSONParse, logger } from './utils.ts'
 
 export class SRWebsocket {
   debug: boolean
@@ -126,7 +126,7 @@ export class SRWebsocket {
 
     let json
     try {
-      json = JSON.parse(data)
+      json = JSONParse(data)
     } catch (error) {
       return logger.warn('[node-open-shamrock] failed to parse JSON')
     }
@@ -145,7 +145,7 @@ export class SRWebsocket {
 
     let json
     try {
-      json = JSON.parse(data)
+      json = JSONParse(data)
     } catch (error) {
       return logger.warn('[node-open-shamrock] failed to parse JSON')
     }

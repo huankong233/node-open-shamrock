@@ -125,7 +125,7 @@ export interface PrivateMessage {
   temp_source: number
 }
 
-/**群消息*/
+// 群消息
 export interface GroupMessage {
   time: number
   self_id: number
@@ -150,6 +150,7 @@ export interface GroupMessage {
   sender: Sender
 }
 
+// 频道信息
 export interface GuildMessage {
   time: number
   self_id: number
@@ -166,22 +167,12 @@ export interface GuildMessage {
   target_id: 0
   // 目标 QQ
   peer_id: number
-  /**
-   * 禁用!!!!
-   * 存在超出 number 类型的范围的问题
-   * @deprecated
-   */
-  user_id: number
+  user_id: BigInt
   message: object
   raw_message: string
   font: 0
   sender: {
-    /**
-     * 禁用!!!!
-     * 存在超出 number 类型的范围的问题
-     * @deprecated
-     */
-    user_id: number
+    user_id: BigInt
     nickname: string
     card: string
     // 貌似锁定 member
