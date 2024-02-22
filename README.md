@@ -1,6 +1,6 @@
 # node-open-shamrock
 
-## 介绍
+## 😎 介绍
 
 针对 `OpenShamrock` 开发的 `SDK`, 跟随官方文档更新
 
@@ -13,6 +13,13 @@
 ## 📚 文档
 
 - [OpenShamrock 帮助中心](https://whitechi73.github.io/OpenShamrock)
+
+## 🚧 完成状态
+
+- [x] 连接后端
+- [ ] 事件触发 (3/5)
+- [ ] 接口调用
+- [ ] 数据处理
 
 ## ⭐ 星星
 
