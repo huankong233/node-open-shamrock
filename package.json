@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsx test.ts"
+    "dev": "nodemon"
   },
   "dependencies": {
     "ws": "^8.16.0"
@@ -30,6 +30,8 @@
   "devDependencies": {
     "@types/node": "^20.11.19",
     "@types/ws": "^8.5.10",
+    "nodemon": "^3.0.3",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   }
 }

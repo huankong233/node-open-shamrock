@@ -14,6 +14,7 @@ import type {
 import WebSocket, { Data } from 'ws'
 import { randomUUID } from 'crypto'
 import { SREventBus } from './SREventBus.ts'
+import { logger } from './utils.ts'
 
 export class SRWebsocket {
   debug: boolean
@@ -127,10 +128,13 @@ export class SRWebsocket {
     try {
       json = JSON.parse(data)
     } catch (error) {
-      return console.warn('[node-open-shamrock] failed to parse JSON')
+      return logger.warn('[node-open-shamrock] failed to parse JSON')
     }
 
-    if (this.debug) console.debug('[node-open-shamrock] received data from event', json)
+    if (this.debug) {
+      logger.debug('[node-open-shamrock] received data from event')
+      logger.dir(json)
+    }
 
     this.eventBus.parseMessage(json)
   }
@@ -143,10 +147,13 @@ export class SRWebsocket {
     try {
       json = JSON.parse(data)
     } catch (error) {
-      return console.warn('[node-open-shamrock] failed to parse JSON')
+      return logger.warn('[node-open-shamrock] failed to parse JSON')
     }
 
-    if (this.debug) console.debug('[node-open-shamrock] received data from api', json)
+    if (this.debug) {
+      logger.debug('[node-open-shamrock] received data from api')
+      logger.dir(json)
+    }
 
     if (json.echo === undefined) return
 
@@ -189,7 +196,10 @@ export class SRWebsocket {
       echo
     }
 
-    if (this.debug) console.debug('[node-open-shamrock] send request', message)
+    if (this.debug) {
+      logger.debug('[node-open-shamrock] send request')
+      logger.dir(message)
+    }
 
     return new Promise((resolve, reject) => {
       const onSuccess = (res: APISuccessResponse<WSSendReturn[T]>) => {

@@ -16,6 +16,11 @@ export interface SRWebsocketOptionsHost {
 
 export type SRWebsocketOptions = SRWebsocketOptionsBaseUrl | SRWebsocketOptionsHost
 
+export interface WSCloseRes {
+  code: number
+  reason: Buffer
+}
+
 export interface APIRequest<T> {
   action: string
   params: T
@@ -48,28 +53,168 @@ export interface ResponseHandler {
 
 export type EventHandle<T extends keyof SocketHandle> = (context: SocketHandle[T]) => void
 
+// 心跳包
+export interface HeartBeat {
+  time: number
+  self_id: number
+  post_type: 'meta_event'
+  meta_event_type: 'heartbeat'
+  sub_type: 'connect'
+  status: Status
+  // 到下次的间隔
+  interval: number
+}
+
+// 生命周期
+export interface LifeCycle {
+  time: number
+  self_id: number
+  post_type: 'meta_event'
+  meta_event_type: 'lifecycle'
+  sub_type: 'connect'
+  status: Status
+  // 到下次的间隔
+  interval: number
+}
+
+// 发送者信息
+export interface Sender {
+  user_id: number
+  nickname: string
+  card: string
+  role: string
+  title: string
+  level: string
+}
+
+// 私聊消息
+export interface PrivateMessage {
+  time: number
+  post_type: 'message'
+  message_type: 'private'
+  sub_type: 'friend'
+  // 消息 ID
+  message_id: number
+  // 消息目标
+  target_id: number
+  // 目标QQ
+  peer_id: number
+  // 发送者 QQ 号
+  user_id: number
+  // 消息内容
+  message: object
+  // CQ 码格式消息
+  raw_message: string
+  // 字体
+  font: number
+  // 发送人信息
+  sender: Sender
+  /**
+   * 临时会话来源
+   * -1 非临时会话
+   * 0	群聊
+   * 1	QQ咨询
+   * 2	查找
+   * 3	QQ电影
+   * 4	热聊
+   * 6	验证消息
+   * 7	多人聊天
+   * 8	约会
+   * 9	通讯录
+   */
+  temp_source: number
+}
+
+/**群消息*/
+export interface GroupMessage {
+  time: number
+  self_id: number
+  post_type: 'message'
+  message_type: 'group'
+  sub_type: 'normal'
+  // 消息 ID
+  message_id: number
+  // 群号
+  group_id: number
+  // 目标QQ
+  peer_id: number
+  // 发送者 QQ 号
+  user_id: number
+  // 消息内容
+  message: object
+  // CQ 码格式消息
+  raw_message: string
+  // 字体
+  font: number
+  // 发送人信息
+  sender: Sender
+}
+
+export interface GuildMessage {
+  time: number
+  self_id: number
+  post_type: 'message'
+  message_type: 'guild'
+  sub_type: 'channel'
+  // 消息 ID
+  message_id: number
+  // 频道 ID
+  guild_id: string
+  // 分区 ID
+  channel_id: string
+  // 锁定为 0
+  target_id: 0
+  // 目标 QQ
+  peer_id: number
+  /**
+   * 禁用!!!!
+   * 存在超出 number 类型的范围的问题
+   * @deprecated
+   */
+  user_id: number
+  message: object
+  raw_message: string
+  font: 0
+  sender: {
+    /**
+     * 禁用!!!!
+     * 存在超出 number 类型的范围的问题
+     * @deprecated
+     */
+    user_id: number
+    nickname: string
+    card: string
+    // 貌似锁定 member
+    role: 'member'
+    title: string
+    level: string
+    tiny_id: string
+  }
+}
+
 export type SocketHandle = {
   'socket.eventConnecting': void
   'socket.apiConnecting': void
   'socket.eventOpen': void
   'socket.apiOpen': void
-  'socket.eventClose': { code: number; reason: Buffer }
-  'socket.apiClose': { code: number; reason: Buffer }
+  'socket.eventClose': WSCloseRes
+  'socket.apiClose': WSCloseRes
   'socket.eventError': Error
   'socket.apiError': Error
-  socket: void | { code: number; reason: Buffer } | Error
+  socket: void | WSCloseRes | Error
 
   'api.preSend': APIRequest<any>
   'api.response': APISuccessResponse<any> | APIErrorResponse<any>
   api: APIRequest<any> | APISuccessResponse<any> | APIErrorResponse<any>
 
-  // 'meta_event.lifecycle': LifeCycle
-  // 'meta_event.heartbeat': HeartBeat
-  // meta_event: HeartBeat | LifeCycle
+  'meta_event.lifecycle': LifeCycle
+  'meta_event.heartbeat': HeartBeat
+  meta_event: HeartBeat | LifeCycle
 
-  // 'message.private': PrivateMessage
-  // 'message.group': GroupMessage
-  // message: PrivateMessage | GroupMessage
+  'message.private': PrivateMessage
+  'message.group': GroupMessage
+  'message.guild': GuildMessage
+  message: PrivateMessage | GroupMessage | GuildMessage
 
   // 'request.friend': RequestFriend
   // 'request.group': RequestGroup
@@ -205,6 +350,17 @@ export interface LoginInfo {
   user_id: number
   // 昵称
   nickname: string
+}
+
+export interface Status {
+  // 用户信息
+  self: { platform: 'qq'; user_id: number }
+  // 表示BOT是否在线
+  online: boolean
+  // 锁定为 true
+  good: boolean
+  // 锁定为 "正常"
+  'qq.status': '正常'
 }
 
 export type WSSendReturn = {
