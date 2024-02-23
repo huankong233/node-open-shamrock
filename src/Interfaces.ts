@@ -167,20 +167,239 @@ export interface GuildMessage {
   target_id: 0
   // 目标 QQ
   peer_id: number
-  user_id: BigInt
+  user_id: bigint
   message: object
   raw_message: string
   font: 0
   sender: {
-    user_id: BigInt
+    user_id: bigint
     nickname: string
     card: string
-    // 貌似锁定 member
+    // 锁定 member
+    // OpenShamrock: 手机QQ获取 role 会导致崩溃
     role: 'member'
     title: string
     level: string
     tiny_id: string
   }
+}
+
+// 加群请求／邀请
+export interface RequestGroup {
+  time: number
+  self_id: number
+  post_type: 'request'
+  request_type: 'group'
+  sub_type: 'add' | 'invite'
+  group_id: number
+  user_id: number
+  user_uid: string
+  comment: string
+  flag: string
+}
+
+// 加好友请求
+export interface RequestFriend {
+  time: number
+  self_id: number
+  post_type: 'request'
+  request_type: 'friend'
+  user_id: number
+  comment: string
+  flag: string
+}
+
+export interface FriendRecall {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'friend_recall'
+  user_id: number
+  operator_id: number
+  message_id: number
+}
+
+export interface GroupRecall {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'group_recall'
+  group_id: number
+  operator_id: number
+  user_id: number
+  message_id: number
+}
+
+export interface GroupIncrease {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'group_increase'
+  sub_type: 'invite' | 'approve'
+  group_id: number
+  operator_id: number
+  operator_uid: string
+  user_id: number
+  user_uid: string
+  sender_id: number
+  target_id: number
+  target_uid: string
+}
+
+export interface GroupDecrease {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'group_decrease'
+  sub_type: 'leave' | 'kick' | 'kick_me'
+  group_id: number
+  operator_id: number
+  user_id: number
+  user_uid: string
+  sender_id: number
+  target_id: number
+  target_uid: string
+}
+
+export interface GroupAdmin {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'group_admin'
+  sub_type: 'set' | 'unset'
+  group_id: number
+  operator_id: number
+  target_id: number
+  target_uid: string
+}
+
+export interface GroupUpload {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'group_upload'
+  group_id: number
+  operator_id: number
+  user_id: number
+  file: {
+    id: string
+    name: string
+    size: number
+    busid: number
+    url: string
+  }
+}
+
+export interface PrivateUpload {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'private_upload'
+  operator_id: number
+  user_id: number
+  sender_id: number
+  private_file: {
+    id: string
+    name: string
+    size: number
+    sub_id: string
+    url: string
+    expire: number
+  }
+}
+
+export interface GroupBan {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'group_ban'
+  sub_type: 'ban' | 'lift_ban'
+  group_id: number
+  operator_id: number
+  operator_uid: string
+  user_id: number
+  sender_id: number
+  duration: number
+  target_id: number
+  target_uid: string
+}
+
+export interface GroupCard {
+  // TODO: 无法触发
+}
+
+export interface FriendAdd {
+  // TODO: 未实现
+}
+
+export interface OfflineFile {
+  // TODO: 未实现
+}
+
+export interface Essence {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'essence'
+  sub_type: 'add' | 'delete'
+  group_id: number
+  operator_id: number
+  sender_id: number
+  message_id: number
+}
+
+export interface ClientStatus {
+  // TODO: 未实现
+}
+
+export interface NotifyPokeFriend {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'notify'
+  sub_type: 'poke'
+  operator_id: number
+  user_id: number
+  sender_id: number
+  target_id: number
+  poke_detail: {
+    action: string
+    action_img_url: string
+  }
+}
+
+export interface NotifyPokeGroup {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'notify'
+  sub_type: 'poke'
+  group_id: number
+  operator_id: number
+  user_id: number
+  target_id: number
+  poke_detail: {
+    action_img_url: string
+  }
+}
+
+export interface NotifyLuckyKing {
+  // TODO: 未实现
+}
+
+export interface NotifyHonor {
+  // TODO: 未实现
+}
+
+export interface NotifyTitle {
+  time: number
+  self_id: number
+  post_type: 'notice'
+  notice_type: 'notify'
+  sub_type: 'title'
+  group_id: number
+  user_id: number
+  title: string
 }
 
 export type SocketHandle = {
@@ -207,44 +426,50 @@ export type SocketHandle = {
   'message.guild': GuildMessage
   message: PrivateMessage | GroupMessage | GuildMessage
 
-  // 'request.friend': RequestFriend
-  // 'request.group': RequestGroup
-  // request: RequestGroup | RequestFriend
+  'request.friend': RequestFriend
+  'request.group': RequestGroup
+  request: RequestGroup | RequestFriend
 
-  // 'notice.group_admin': GroupAdmin
-  // 'notice.group_upload': GroupUpload
-  // 'notice.group_decrease': GroupDecrease
-  // 'notice.group_increase': GroupIncrease
-  // 'notice.group_ban': GroupBan
-  // 'notice.friend_add': FriendAdd
-  // 'notice.group_recall': GroupRecall
-  // 'notice.friend_recall': FriendRecall
-  // 'notice.notify.poke.friend': NotifyPokeFriend
-  // 'notice.notify.poke.group': NotifyPokeGroup
-  // 'notice.notify.lucky_king': NotifyLuckyKing
-  // 'notice.notify.honor': NotifyHonor
-  // 'notice.notify': NotifyHonor | NotifyLuckyKing | NotifyPokeGroup | NotifyPokeFriend
-  // 'notice.group_card': GroupCard
-  // 'notice.offline_file': OfflineFile
-  // 'notice.client_status': ClientStatus
-  // 'notice.essence': Essence
-  // notice:
-  //   | Essence
-  //   | ClientStatus
-  //   | OfflineFile
-  //   | GroupCard
-  //   | NotifyHonor
-  //   | NotifyLuckyKing
-  //   | NotifyPokeGroup
-  //   | NotifyPokeFriend
-  //   | FriendRecall
-  //   | GroupRecall
-  //   | FriendAdd
-  //   | GroupBan
-  //   | GroupIncrease
-  //   | GroupDecrease
-  //   | GroupUpload
-  //   | GroupAdmin
+  'notice.friend_recall': FriendRecall
+  'notice.group_recall': GroupRecall
+  'notice.group_increase': GroupIncrease
+  'notice.group_decrease': GroupDecrease
+  'notice.group_admin': GroupAdmin
+  'notice.group_upload': GroupUpload
+  'notice.private_upload': PrivateUpload
+  'notice.group_ban': GroupBan
+  'notice.group_card': GroupCard
+  'notice.friend_add': FriendAdd
+  'notice.offline_file': OfflineFile
+  'notice.essence': Essence
+  'notice.client_status': ClientStatus
+
+  'notice.notify.poke.friend': NotifyPokeFriend
+  'notice.notify.poke.group': NotifyPokeGroup
+  'notice.notify.lucky_king': NotifyLuckyKing
+  'notice.notify.honor': NotifyHonor
+  'notice.notify.title': NotifyTitle
+  'notice.notify': NotifyPokeFriend | NotifyPokeGroup | NotifyLuckyKing | NotifyHonor | NotifyTitle
+
+  notice:
+    | FriendRecall
+    | GroupRecall
+    | GroupIncrease
+    | GroupDecrease
+    | GroupAdmin
+    | GroupUpload
+    | PrivateUpload
+    | GroupBan
+    | GroupCard
+    | FriendAdd
+    | OfflineFile
+    | Essence
+    | ClientStatus
+    | NotifyPokeFriend
+    | NotifyPokeGroup
+    | NotifyLuckyKing
+    | NotifyHonor
+    | NotifyTitle
 }
 
 export type WSSendParam = {
