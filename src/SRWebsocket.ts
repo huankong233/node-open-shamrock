@@ -184,6 +184,11 @@ export class SRWebsocket {
     }
   }
 
+  /**
+   * 发送API请求
+   * @param method API 端点
+   * @param params 请求参数
+   */
   async send<T extends keyof WSSendParam>(
     method: T,
     params: WSSendParam[T]
@@ -284,5 +289,16 @@ export class SRWebsocket {
   emit<T extends keyof SocketHandle>(type: T, context: SocketHandle[T]): this {
     this.eventBus.emit(type, context)
     return this
+  }
+
+  // --------------------------------APIS--------------------------------
+
+  /**
+   * 获取登录号信息
+   * @param username
+   * @param password
+   */
+  get_login_info() {
+    return this.send('get_login_info', {})
   }
 }

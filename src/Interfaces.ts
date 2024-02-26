@@ -472,93 +472,596 @@ export type SocketHandle = {
     | NotifyTitle
 }
 
+export interface Refresh {
+  refresh?: boolean
+  no_cache?: boolean
+}
+
+export interface MessageObject {
+  type: string
+  data: { [key: string]: string | number }[]
+}
+
+export type MessageArray = MessageObject[]
+
 export type WSSendParam = {
+  set_group_ban: { group_id: number; user_id: number; duration?: number }
+  clean_cache: {}
+  clear_msgs:
+    | { message_type: 'group'; group_id: number }
+    | { message_type: 'private'; user_id: number }
+  create_group_file_folder: { group_id: number; name: string }
+  create_guild_role: { guild_id: string; name: string; color: number; initial_users: number[] }
+  delete_essence_msg: { message_id: number }
+  delete_essence_message: { message_id: number }
+  delete_group_file: { group_id: number; file_id: string; busid: number }
+  delete_group_folder: { group_id: number; folder_id: string }
+  delete_guild_role: { guild_id: string; role_id: number }
+  delete_msg: { message_id: number }
+  delete_message: { message_id: number }
+  download_file: {
+    url?: string
+    name?: string
+    base64?: string
+    thread_cnt?: number
+    headers?: string[] | string
+  }
+  'fav.add_image_msg': {
+    user_id: number
+    nick: string
+    group_name?: string
+    group_id?: number
+    file: string
+  }
+  'fav.add_text_msg': {
+    user_id: number
+    nick: string
+    group_name?: string
+    group_id?: number
+    time?: number
+    content: string
+  }
+  'fav.get_item_content': { id: number }
+  'fav.get_item_list': { category: number; start_pos: number; page_size: number }
+  get_cookies: { domain?: string }
+  get_cookie: { domain?: string }
+  get_credentials: { domain?: string }
+  get_csrf_token: { domain?: string }
+  get_device_battery: {}
+  get_essence_msg_list: { group_id: number; page?: number; page_size?: number }
+  get_essence_message_list: { group_id: number; page?: number; page_size?: number }
+  get_forward_msg: { id: number }
+  get_friend_list: Refresh
+  get_friend_system_msg: {}
+  get_guild_channel_list: { guild_id: string } & Refresh
+  get_group_file_system_info: { group_id: number }
+  get_group_file_url: { group_id: number; file_id: string; busid: number }
+  get_group_msg_history: { group_id: number; count?: number; message_seq?: number }
+  _get_group_notice: { group_id: number }
+  get_group_notice: { group_id: number }
+  get_group_at_all_remain: { group_id: number }
+  get_group_root_files: { group_id: number }
+  get_group_files_by_folder: { group_id: number; folder_id: string }
+  get_group_system_msg: {}
+  get_guild_feeds: { guild_id: string; channel_id?: string; from?: number }
+  get_guild_list: { old_sdk?: boolean } & Refresh
+  get_guild_member_list: { guild_id: string; all?: boolean; next_token?: string }
+  get_guild_member_profile: { guild_id: string; user_id: number }
+  get_guild_meta_by_guest: { guild_id: string }
+  get_guild_roles: { guild_id: string }
+  get_guild_service_profile: {}
+  get_history_msg: (
+    | { message_type: 'group'; group_id: number }
+    | { message_type: 'private'; user_id: number }
+  ) & { count: number; message_seq: number }
+  get_http_cookies: { appid: string; daid: string; jumpurl: string }
+  get_image: { file: string }
+  get_latest_events: {}
   get_login_info: {}
-  // set_qq_profile: {
-  //   nickname: string
-  //   company: string
-  //   email: string
-  //   college: string
-  //   personal_note: string
-  // }
-  // qidian_get_account_info: {}
-  // _get_model_show: { model: string }
-  // _set_model_show: { model: string; model_show: string }
-  // get_online_clients: NoCache
-  // get_stranger_info: NoCache & UserId
-  // get_friend_list: {}
-  // get_unidirectional_friend_list: {}
-  // delete_friend: UserId
-  // delete_unidirectional_friend: UserId
-  // send_private_msg: { group_id?: number; auto_escape?: boolean } & UserId & Message
-  // send_group_msg: { auto_escape?: boolean } & Message & GroupId
-  // send_msg: PrivateData | GroupData
-  // get_msg: MessageId
-  // delete_msg: MessageId
-  // mark_msg_as_read: MessageId
-  // get_forward_msg: { message_id: string; id: string }
-  // send_group_forward_msg: { messages: messageNode } & GroupId
-  // send_private_forward_msg: { messages: messageNode } & UserId
-  // get_group_msg_history: { message_seq?: int64 } & GroupId
-  // get_image: FileStr
-  // can_send_image: {}
-  // ocr_image: { image: string }
-  // get_record: { out_format: string } & FileStr
-  // can_send_record: {}
-  // set_friend_add_request: { flag: string; approve?: boolean; remark?: string }
-  // set_group_add_request: {
-  //   flag: string
-  //   sub_type: string
-  //   approve?: boolean
-  //   reason?: string
-  //   type?: string
-  // }
-  // get_group_info: NoCache & GroupId
-  // get_group_list: NoCache
-  // get_group_member_info: NoCache & GroupId & UserId
-  // get_group_member_list: NoCache & GroupId
-  // get_group_honor_info: { type: string } & GroupId
-  // get_group_system_msg: {}
-  // get_essence_msg_list: GroupId
-  // get_group_at_all_remain: GroupId
-  // set_group_name: { group_name?: string } & GroupId
-  // set_group_portrait: { cache?: number } & GroupId & FileStr
-  // set_group_admin: Enable & GroupId & UserId
-  // set_group_card: { card?: string } & GroupId & UserId
-  // set_group_special_title: { special_title?: string } & GroupId & UserId & Duration
-  // set_group_ban: Duration & GroupId & UserId
-  // set_group_whole_ban: Enable & GroupId
-  // set_group_anonymous_ban: { anonymous: any; anonymous_flag?: string; flag?: string } & GroupId &
-  //   Duration
-  // set_essence_msg: MessageId
-  // delete_essence_msg: MessageId
-  // send_group_sign: {}
-  // set_group_anonymous: Enable & GroupId
-  // _send_group_notice: { image: string } & Content & GroupId
-  // _get_group_notice: { group_id: int64 }
-  // set_group_kick: { reject_add_request?: boolean } & GroupId & UserId
-  // set_group_leave: { is_dismiss?: boolean } & GroupId
-  // upload_group_file: { name: string; folder?: string } & GroupId & FileStr
-  // delete_group_file: { file_id: string; busid: int32 } & GroupId
-  // create_group_file_folder: { name: string; parent_id: '/' } & GroupId
-  // delete_group_folder: { folder_id: string } & GroupId
-  // get_group_file_system_info: GroupId
-  // get_group_root_files: GroupId
-  // get_group_files_by_folder: { folder_id: string } & GroupId
-  // get_group_file_url: { file_id: string; busid: int32 } & GroupId
-  // upload_private_file: { name: string } & FileStr & UserId
-  // get_cookies: Domain
-  // get_csrf_token: {}
-  // get_credentials: Domain
-  // get_version_info: {}
-  // get_status: {}
-  // set_restart: { delay?: number }
-  // clean_cache: {}
-  // reload_event_filter: { file: string }
-  // download_file: { thread_count: int32; headers: string | string[] } & FileUrl
-  // check_url_safely: FileUrl
-  // '.get_word_slices': Content
-  // '.handle_quick_operation': QuickOperationType<keyof QuickOperation>
+  get_model_show: { user_id?: number }
+  _get_model_show: { model: string }
+  get_msg: { message_id: number } | { msg_id: number }
+  get_message: { message_id: number } | { msg_id: number }
+  get_not_joined_group_info: { group_id: number }
+  _get_online_clients: {}
+  get_user_info: { user_id: number } & Refresh
+  get_profile_card: { user_id: number } & Refresh
+  get_prohibited_member_list: { group_id: number }
+  get_record: { file: string; out_format: string }
+  get_self_info: {}
+  get_status: {}
+  status: {}
+  get_stranger_info: { user_id: number }
+  _get_stranger_info: { user_id: number }
+  get_supported_actions: {}
+  get_group_honor_info: { group_id: number } & Refresh
+  get_troop_honor_info: { group_id: number } & Refresh
+  get_group_info: { group_id: number } & Refresh
+  get_group_list: Refresh
+  get_group_member_info: { user_id: number; group_id: number } & Refresh
+  get_group_member_list: { group_id: number } & Refresh
+  get_uid: { uin_list: number[] }
+  get_uin_by_uid: { uid_list: string[] }
+  get_version_info: {}
+  get_version: {}
+  get_weather: { code: number } | { city: string }
+  get_weather_city_code: { city: string }
+  poke: { group_id: number; user_id: number }
+  is_blacklist_uin: { user_id: number }
+  set_group_kick: {
+    group_id: number
+    user_id: number
+    kick_msg?: string
+    reject_add_request?: boolean
+  }
+  kick_group_member: {
+    group_id: number
+    user_id: number
+    kick_msg?: string
+    reject_add_request?: boolean
+  }
+  leave_group: { group_id: number }
+  set_group_leave: { group_id: number }
+  set_group_card: { group_id: number; user_id: number; card?: string }
+  set_group_name: { group_id: number; group_name: string }
+  set_group_remark: { group_id: number; remark?: string }
+  modify_group_remark: { group_id: number; remark?: string }
+  '.handle_quick_operation_async': {
+    self_id: number
+    context: SocketHandle['message']
+    operation?: {
+      reply: string | MessageObject
+      auto_escape?: boolean
+      at_sender?: boolean
+      auto_reply?: boolean
+      delete?: boolean
+      delete_delay?: number
+      kick?: boolean
+      ban?: boolean
+      ban_duration?: number
+    }
+  }
+  rename_group_folder: { group_id: number; folder_id: string; name: string }
+  request_upload_group_image: {
+    md5: string
+    file_size: number
+    width: number
+    height: number
+    group_id: number
+  }
+  restart_me: {}
+  sanc_qrcode: { pic: string }
+  send_forward_msg:
+    | {
+        message_type: 'group'
+        group_id: number
+        messages: {
+          data:
+            | { id: number }[]
+            | {
+                content: string
+                uin?: number
+                uid?: string
+                name?: string
+                seq?: number
+                time?: number
+              }[]
+        }
+      }
+    | {
+        detail_type: 'group'
+        group_id: number
+        messages: {
+          data:
+            | { id: number }[]
+            | {
+                content: string
+                uin?: number
+                uid?: string
+                name?: string
+                seq?: number
+                time?: number
+              }[]
+        }
+      }
+    | {
+        message_type: 'private'
+        user_id: number
+        messages: {
+          data:
+            | { id: number }[]
+            | {
+                content: string
+                uin?: number
+                uid?: string
+                name?: string
+                seq?: number
+                time?: number
+              }[]
+        }
+      }
+    | {
+        detail_type: 'private'
+        user_id: number
+        messages: {
+          data:
+            | { id: number }[]
+            | {
+                content: string
+                uin?: number
+                uid?: string
+                name?: string
+                seq?: number
+                time?: number
+              }[]
+        }
+      }
+  send_group_forward_msg: {
+    group_id: number
+    messages:
+      | { id: number }[]
+      | {
+          content: string
+          uin?: number
+          uid?: string
+          name?: string
+          seq?: number
+          time?: number
+        }[]
+  }
+  send_group_message:
+    | {
+        group_id: number
+        retry_cnt?: number
+        recall_duration?: number
+        message: MessageObject | MessageArray
+      }
+    | {
+        group_id: number
+        retry_cnt?: number
+        recall_duration?: number
+        message: string
+        autoEscape?: boolean
+      }
+  send_group_msg:
+    | {
+        group_id: number
+        retry_cnt?: number
+        recall_duration?: number
+        message: MessageObject | MessageArray
+      }
+    | {
+        group_id: number
+        retry_cnt?: number
+        recall_duration?: number
+        message: string
+        autoEscape?: boolean
+      }
+  send_group_notice: { group_id: number; content: string; image?: string }
+  send_group_announcement: { group_id: number; content: string; image?: string }
+  send_group_sign: { group_id: number }
+  send_guild_message:
+    | {
+        guild_id: string
+        channel_id: string
+        retry_cnt?: number
+        recall_duration?: number
+        message: MessageObject | MessageArray
+      }
+    | {
+        guild_id: string
+        channel_id: string
+        retry_cnt?: number
+        recall_duration?: number
+        message: string
+        autoEscape?: boolean
+      }
+  send_guild_msg:
+    | {
+        guild_id: string
+        channel_id: string
+        retry_cnt?: number
+        recall_duration?: number
+        message: string | MessageObject | MessageArray
+      }
+    | {
+        guild_id: string
+        channel_id: string
+        retry_cnt?: number
+        recall_duration?: number
+        message: string
+        autoEscape?: boolean
+      }
+  send_guild_channel_msg:
+    | {
+        guild_id: string
+        channel_id: string
+        retry_cnt?: number
+        recall_duration?: number
+        message: string | MessageObject | MessageArray
+      }
+    | {
+        guild_id: string
+        channel_id: string
+        retry_cnt?: number
+        recall_duration?: number
+        message: string
+        autoEscape?: boolean
+      }
+  send_msg:
+    | {
+        message_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        message_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+    | {
+        detail_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        detail_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+    | {
+        message_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        message_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+    | {
+        detail_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        detail_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+  send_message:
+    | {
+        message_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        message_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+    | {
+        detail_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        detail_type: 'group'
+        retry_cnt?: number
+        recall_duration?: number
+        group_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+    | {
+        message_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        message_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+    | {
+        detail_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        messages: MessageObject | MessageArray
+      }
+    | {
+        detail_type: 'private'
+        retry_cnt?: number
+        recall_duration?: number
+        user_id: number
+        auto_escape?: boolean
+        messages: string
+      }
+  send_msg_by_resid: {
+    res_id: string
+    peer_id: string
+    message_type: 'group' | 'private'
+  }
+  send_private_forward_msg: {
+    user_id: number
+    messages:
+      | { id: number }[]
+      | {
+          content: string
+          uin?: number
+          uid?: string
+          name?: string
+          seq?: number
+          time?: number
+        }[]
+  }
+  send_private_msg:
+    | {
+        user_id: number | 'self'
+        group_id?: number
+        retry_cnt?: number
+        recall_duration?: number
+        message: MessageObject | MessageArray
+      }
+    | {
+        user_id: number | 'self'
+        group_id?: number
+        retry_cnt?: number
+        recall_duration?: number
+        auto_escape: boolean
+        message: string
+      }
+  send_private_message:
+    | {
+        user_id: number | 'self'
+        group_id?: number
+        retry_cnt?: number
+        recall_duration?: number
+        message: MessageObject | MessageArray
+      }
+    | {
+        user_id: number | 'self'
+        group_id?: number
+        retry_cnt?: number
+        recall_duration?: number
+        auto_escape: boolean
+        message: string
+      }
+  send_friend_msg:
+    | {
+        user_id: number | 'self'
+        group_id?: number
+        retry_cnt?: number
+        recall_duration?: number
+        message: MessageObject | MessageArray
+      }
+    | {
+        user_id: number | 'self'
+        group_id?: number
+        retry_cnt?: number
+        recall_duration?: number
+        auto_escape: boolean
+        message: string
+      }
+  set_essence_msg: { message_id: number }
+  set_essence_message: { message_id: number }
+  set_friend_add_request: { flag: string; approve?: boolean; remark?: string; notSeen?: boolean }
+  set_group_add_request: { flag: string; approve?: boolean; remark?: string; notSeen?: boolean }
+  set_group_admin: { group_id: number; user_id: number; enable: boolean }
+  set_group_comment_face:
+    | {
+        group_id: number
+        message_id: number
+        face_id: number
+        is_set?: boolean
+      }
+    | {
+        group_id: number
+        msg_id: number
+        face_id: number
+        is_set?: boolean
+      }
+  set_group_special_title: { group_id: number; user_id: number; special_title: string }
+  set_group_whole_ban: { group_id: number; enable: boolean }
+  set_guild_member_role:
+    | {
+        guild_id: string
+        role_id: string
+        set?: boolean
+        user_id: string
+      }
+    | {
+        guild_id: string
+        role_id: string
+        set?: boolean
+        users: string[]
+      }
+  _set_model_show:
+    | {
+        model: string
+        manu: string
+        modelshow?: string
+        imei?: string
+        show?: boolean
+      }
+    | {
+        model: string
+        model_show: string
+        modelshow?: string
+        imei?: string
+        show?: boolean
+      }
+  set_qq_profile: {
+    nickname: string
+    company: string
+    email: string
+    college: string
+    personal_note: string
+    birthday?: number
+    age?: number
+  }
+  sign_ark_message: { json: string }
+  switch_account: { user_id: number }
+  update_guild_role: { guild_id: string; role_id: string; name: string; color: number }
+  upload_file_to_shamrock: {
+    md5: string
+    offset?: number | string
+    chunk: string
+    file_size?: string
+  }
+  upload_group_file: { group_id: number; file: string; name: string }
+  upload_nt_resource: {
+    file: string
+    message_type: 'group' | 'private' | 'guild'
+    file_type: 'file' | 'image' | 'pic' | 'video' | 'audio' | 'voice' | 'record' | string
+  }
+  upload_nt_res: {
+    file: string
+    message_type: 'group' | 'private' | 'guild'
+    file_type: 'file' | 'image' | 'pic' | 'video' | 'audio' | 'voice' | 'record' | string
+  }
+  upload_private_file: {
+    user_id: number
+    file: string
+    name: string
+  }
+}
+
+export type WSSendReturn = {
+  // get_login_info: LoginInfo
 }
 
 export interface LoginInfo {
@@ -577,80 +1080,4 @@ export interface Status {
   good: boolean
   // 锁定为 "正常"
   'qq.status': '正常'
-}
-
-export type WSSendReturn = {
-  get_login_info: LoginInfo
-  // set_qq_profile: void
-  // qidian_get_account_info: QiDianAccountInfo
-  // _get_model_show: Variants[]
-  // _set_model_show: void
-  // get_online_clients: Device[]
-  // get_stranger_info: StrangerInfo
-  // get_friend_list: FriendInfo[]
-  // get_unidirectional_friend_list: SourceInfo[]
-  // delete_friend: void
-  // delete_unidirectional_friend: void
-  // send_private_msg: MessageId
-  // send_group_msg: MessageId
-  // send_msg: MessageId
-  // get_msg: MessageInfo
-  // delete_msg: void
-  // mark_msg_as_read: void
-  // get_forward_msg: ForwardData
-  // send_group_forward_msg: ForwardId
-  // send_private_forward_msg: ForwardId
-  // get_group_msg_history: message[]
-  // get_image: QQImageData
-  // can_send_image: CanSend
-  // ocr_image: OCRImage
-  // get_record: RecordFormatData
-  // can_send_record: CanSend
-  // set_friend_add_request: void
-  // set_group_add_request: GroupAddRequest
-  // get_group_info: GroupInfo
-  // get_group_list: GroupInfo[]
-  // get_group_member_info: GroupMemberInfo
-  // get_group_member_list: GroupMemberInfo[]
-  // get_group_honor_info: GroupHonorInfo
-  // get_group_system_msg: GroupSystemMSG | null
-  // get_essence_msg_list: EssenceMessage[]
-  // get_group_at_all_remain: GroupAtAllRemain
-  // set_group_name: void
-  // set_group_portrait: void
-  // set_group_admin: void
-  // set_group_card: void
-  // set_group_special_title: void
-  // set_group_ban: void
-  // set_group_whole_ban: void
-  // set_group_anonymous_ban: void
-  // set_essence_msg: void
-  // delete_essence_msg: void
-  // send_group_sign: void
-  // set_group_anonymous: void
-  // _send_group_notice: void
-  // _get_group_notice: GroupNotice
-  // set_group_kick: void
-  // set_group_leave: void
-  // upload_group_file: void
-  // delete_group_file: void
-  // create_group_file_folder: void
-  // delete_group_folder: void
-  // get_group_file_system_info: GroupFileSystemInfo
-  // get_group_root_files: GroupRootFileSystemInfo
-  // get_group_files_by_folder: GroupRootFileSystemInfo
-  // get_group_file_url: FileUrl
-  // upload_private_file: void
-  // get_cookies: CookiesData
-  // get_csrf_token: CSRFTokenData
-  // get_credentials: CookiesData & CSRFTokenData
-  // get_version_info: VersionInfo
-  // get_status: Status
-  // set_restart: void
-  // clean_cache: void
-  // reload_event_filter: void
-  // download_file: DownloadFile
-  // check_url_safely: URLSafely
-  // '.get_word_slices': WordSlicesData
-  // '.handle_quick_operation': void
 }
