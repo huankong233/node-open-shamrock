@@ -26,16 +26,16 @@ export class SREventBus extends EventEmitter implements EventEmitter {
   emit<T extends keyof SocketHandle>(type: T, context: SocketHandle[T]): boolean {
     const handlers = this._events[type]
 
-    // 未注册
-    if (!handlers) return false
-
-    if (typeof handlers === 'function') {
-      // 单个
-      handlers(context)
-    } else {
-      // 多个
-      for (let i = 0; i < handlers.length; i++) {
-        handlers[i](context)
+    // 已注册
+    if (handlers) {
+      if (typeof handlers === 'function') {
+        // 单个
+        handlers(context)
+      } else {
+        // 多个
+        for (let i = 0; i < handlers.length; i++) {
+          handlers[i](context)
+        }
       }
     }
 
