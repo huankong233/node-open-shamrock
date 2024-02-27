@@ -1,7 +1,5 @@
 import type {
-  APIErrorResponse,
   APIRequest,
-  APISuccessResponse,
   EventHandle,
   ResponseHandler,
   SRWebsocketOptions,
@@ -207,14 +205,14 @@ export class SRWebsocket {
     }
 
     return new Promise((resolve, reject) => {
-      const onSuccess = (res: APISuccessResponse<WSSendReturn[T]>) => {
+      const onSuccess = (response: any) => {
         this.echoMap.delete(echo)
-        return resolve(res.data)
+        return resolve(response)
       }
 
-      const onFailure = (err: APIErrorResponse<WSSendReturn[T]>) => {
+      const onFailure = (reason: any) => {
         this.echoMap.delete(echo)
-        return reject(err)
+        return reject(reason)
       }
 
       this.echoMap.set(echo, {
@@ -226,21 +224,19 @@ export class SRWebsocket {
       this.eventBus.emit('api.preSend', message)
 
       if (this.apiSocket === undefined) {
-        reject(<APIErrorResponse<null>>{
+        reject({
           status: 'failed',
           retcode: -1,
-          msg: 'api socket is not connected',
-          wording: '无连接',
           data: null,
+          message: 'api socket is not connected',
           echo: ''
         })
       } else if (this.apiSocket.readyState === WebSocket.CLOSING) {
-        reject(<APIErrorResponse<null>>{
+        reject({
           status: 'failed',
           retcode: -1,
-          msg: 'api socket is closed',
-          wording: '连接已关闭',
           data: null,
+          message: 'api socket is closed',
           echo: ''
         })
       } else {
@@ -293,12 +289,515 @@ export class SRWebsocket {
 
   // --------------------------------APIS--------------------------------
 
-  /**
-   * 获取登录号信息
-   * @param username
-   * @param password
-   */
+  set_group_ban(params: WSSendParam['set_group_ban']) {
+    return this.send('set_group_ban', params)
+  }
+
+  clean_cache() {
+    return this.send('clean_cache', {})
+  }
+
+  clear_msgs(params: WSSendParam['clear_msgs']) {
+    return this.send('clear_msgs', params)
+  }
+
+  create_group_file_folder(params: WSSendParam['create_group_file_folder']) {
+    return this.send('create_group_file_folder', params)
+  }
+
+  create_guild_role(params: WSSendParam['create_guild_role']) {
+    return this.send('create_guild_role', params)
+  }
+
+  delete_essence_msg(params: WSSendParam['delete_essence_msg']) {
+    return this.send('delete_essence_msg', params)
+  }
+
+  delete_essence_message(params: WSSendParam['delete_essence_message']) {
+    return this.send('delete_essence_message', params)
+  }
+
+  delete_group_file(params: WSSendParam['delete_group_file']) {
+    return this.send('delete_group_file', params)
+  }
+
+  delete_group_folder(params: WSSendParam['delete_group_folder']) {
+    return this.send('delete_group_folder', params)
+  }
+
+  delete_guild_role(params: WSSendParam['delete_guild_role']) {
+    return this.send('delete_guild_role', params)
+  }
+
+  delete_msg(params: WSSendParam['delete_msg']) {
+    return this.send('delete_msg', params)
+  }
+
+  delete_message(params: WSSendParam['delete_message']) {
+    return this.send('delete_message', params)
+  }
+
+  download_file(params: WSSendParam['download_file']) {
+    return this.send('download_file', params)
+  }
+
+  fav_add_image_msg(params: WSSendParam['fav.add_image_msg']) {
+    return this.send('fav.add_image_msg', params)
+  }
+
+  fav_add_text_msg(params: WSSendParam['fav.add_text_msg']) {
+    return this.send('fav.add_text_msg', params)
+  }
+
+  fav_get_item_content(params: WSSendParam['fav.get_item_content']) {
+    return this.send('fav.get_item_content', params)
+  }
+
+  fav_get_item_list(params: WSSendParam['fav.get_item_list']) {
+    return this.send('fav.get_item_list', params)
+  }
+
+  get_cookies(params: WSSendParam['get_cookies']) {
+    return this.send('get_cookies', params)
+  }
+
+  get_cookie(params: WSSendParam['get_cookie']) {
+    return this.send('get_cookie', params)
+  }
+
+  get_credentials(params: WSSendParam['get_credentials']) {
+    return this.send('get_credentials', params)
+  }
+
+  get_csrf_token(params: WSSendParam['get_csrf_token']) {
+    return this.send('get_csrf_token', params)
+  }
+
+  get_device_battery() {
+    return this.send('get_device_battery', {})
+  }
+
+  get_essence_msg_list(params: WSSendParam['get_essence_msg_list']) {
+    return this.send('get_essence_msg_list', params)
+  }
+
+  get_essence_message_list(params: WSSendParam['get_essence_message_list']) {
+    return this.send('get_essence_message_list', params)
+  }
+
+  get_forward_msg(params: WSSendParam['get_forward_msg']) {
+    return this.send('get_forward_msg', params)
+  }
+
+  get_friend_list(params: WSSendParam['get_friend_list']) {
+    return this.send('get_friend_list', params)
+  }
+
+  get_friend_system_msg() {
+    return this.send('get_friend_system_msg', {})
+  }
+
+  get_guild_channel_list(params: WSSendParam['get_guild_channel_list']) {
+    return this.send('get_guild_channel_list', params)
+  }
+
+  get_group_file_system_info(params: WSSendParam['get_group_file_system_info']) {
+    return this.send('get_group_file_system_info', params)
+  }
+
+  get_group_file_url(params: WSSendParam['get_group_file_url']) {
+    return this.send('get_group_file_url', params)
+  }
+
+  get_group_msg_history(params: WSSendParam['get_group_msg_history']) {
+    return this.send('get_group_msg_history', params)
+  }
+
+  _get_group_notice(params: WSSendParam['_get_group_notice']) {
+    return this.send('_get_group_notice', params)
+  }
+
+  get_group_notice(params: WSSendParam['get_group_notice']) {
+    return this.send('get_group_notice', params)
+  }
+
+  get_group_at_all_remain(params: WSSendParam['get_group_at_all_remain']) {
+    return this.send('get_group_at_all_remain', params)
+  }
+
+  get_group_root_files(params: WSSendParam['get_group_root_files']) {
+    return this.send('get_group_root_files', params)
+  }
+
+  get_group_files_by_folder(params: WSSendParam['get_group_files_by_folder']) {
+    return this.send('get_group_files_by_folder', params)
+  }
+
+  get_group_system_msg() {
+    return this.send('get_group_system_msg', {})
+  }
+
+  get_guild_feeds(params: WSSendParam['get_guild_feeds']) {
+    return this.send('get_guild_feeds', params)
+  }
+
+  get_guild_list(params: WSSendParam['get_guild_list']) {
+    return this.send('get_guild_list', params)
+  }
+
+  get_guild_member_list(params: WSSendParam['get_guild_member_list']) {
+    return this.send('get_guild_member_list', params)
+  }
+
+  get_guild_member_profile(params: WSSendParam['get_guild_member_profile']) {
+    return this.send('get_guild_member_profile', params)
+  }
+
+  get_guild_meta_by_guest(params: WSSendParam['get_guild_meta_by_guest']) {
+    return this.send('get_guild_meta_by_guest', params)
+  }
+
+  get_guild_roles(params: WSSendParam['get_guild_roles']) {
+    return this.send('get_guild_roles', params)
+  }
+
+  get_guild_service_profile() {
+    return this.send('get_guild_service_profile', {})
+  }
+
+  get_history_msg(params: WSSendParam['get_history_msg']) {
+    return this.send('get_history_msg', params)
+  }
+
+  get_http_cookies(params: WSSendParam['get_http_cookies']) {
+    return this.send('get_http_cookies', params)
+  }
+
+  get_image(params: WSSendParam['get_image']) {
+    return this.send('get_image', params)
+  }
+
+  get_latest_events() {
+    return this.send('get_latest_events', {})
+  }
+
   get_login_info() {
     return this.send('get_login_info', {})
+  }
+
+  get_model_show(params: WSSendParam['get_model_show']) {
+    return this.send('get_model_show', params)
+  }
+
+  _get_model_show(params: WSSendParam['_get_model_show']) {
+    return this.send('_get_model_show', params)
+  }
+
+  get_msg(params: WSSendParam['get_msg']) {
+    return this.send('get_msg', params)
+  }
+
+  get_message(params: WSSendParam['get_message']) {
+    return this.send('get_message', params)
+  }
+
+  get_not_joined_group_info(params: WSSendParam['get_not_joined_group_info']) {
+    return this.send('get_not_joined_group_info', params)
+  }
+
+  _get_online_clients() {
+    return this.send('_get_online_clients', {})
+  }
+
+  get_user_info(params: WSSendParam['get_user_info']) {
+    return this.send('get_user_info', params)
+  }
+
+  get_profile_card(params: WSSendParam['get_profile_card']) {
+    return this.send('get_profile_card', params)
+  }
+
+  get_prohibited_member_list(params: WSSendParam['get_prohibited_member_list']) {
+    return this.send('get_prohibited_member_list', params)
+  }
+
+  get_record(params: WSSendParam['get_record']) {
+    return this.send('get_record', params)
+  }
+
+  get_self_info() {
+    return this.send('get_self_info', {})
+  }
+
+  get_status() {
+    return this.send('get_status', {})
+  }
+
+  status() {
+    return this.send('status', {})
+  }
+
+  get_stranger_info(params: WSSendParam['get_stranger_info']) {
+    return this.send('get_stranger_info', params)
+  }
+
+  _get_stranger_info(params: WSSendParam['_get_stranger_info']) {
+    return this.send('_get_stranger_info', params)
+  }
+
+  get_supported_actions({}) {
+    return this.send('get_supported_actions', {})
+  }
+
+  get_group_honor_info(params: WSSendParam['get_group_honor_info']) {
+    return this.send('get_group_honor_info', params)
+  }
+
+  get_troop_honor_info(params: WSSendParam['get_troop_honor_info']) {
+    return this.send('get_troop_honor_info', params)
+  }
+
+  get_group_info(params: WSSendParam['get_group_info']) {
+    return this.send('get_group_info', params)
+  }
+
+  get_group_list(params: WSSendParam['get_group_list']) {
+    return this.send('get_group_list', params)
+  }
+
+  get_group_member_info(params: WSSendParam['get_group_member_info']) {
+    return this.send('get_group_member_info', params)
+  }
+
+  get_group_member_list(params: WSSendParam['get_group_member_list']) {
+    return this.send('get_group_member_list', params)
+  }
+
+  get_uid(params: WSSendParam['get_uid']) {
+    return this.send('get_uid', params)
+  }
+
+  get_uin_by_uid(params: WSSendParam['get_uin_by_uid']) {
+    return this.send('get_uin_by_uid', params)
+  }
+
+  get_version_info() {
+    return this.send('get_version_info', {})
+  }
+
+  get_version() {
+    return this.send('get_version', {})
+  }
+
+  get_weather(params: WSSendParam['get_weather']) {
+    return this.send('get_weather', params)
+  }
+
+  get_weather_city_code(params: WSSendParam['get_weather_city_code']) {
+    return this.send('get_weather_city_code', params)
+  }
+
+  poke(params: WSSendParam['poke']) {
+    return this.send('poke', params)
+  }
+
+  is_blacklist_uin(params: WSSendParam['is_blacklist_uin']) {
+    return this.send('is_blacklist_uin', params)
+  }
+
+  set_group_kick(params: WSSendParam['set_group_kick']) {
+    return this.send('set_group_kick', params)
+  }
+
+  kick_group_member(params: WSSendParam['kick_group_member']) {
+    return this.send('kick_group_member', params)
+  }
+
+  leave_group(params: WSSendParam['leave_group']) {
+    return this.send('leave_group', params)
+  }
+
+  set_group_leave(params: WSSendParam['set_group_leave']) {
+    return this.send('set_group_leave', params)
+  }
+
+  set_group_card(params: WSSendParam['set_group_card']) {
+    return this.send('set_group_card', params)
+  }
+
+  set_group_name(params: WSSendParam['set_group_name']) {
+    return this.send('set_group_name', params)
+  }
+
+  set_group_remark(params: WSSendParam['set_group_remark']) {
+    return this.send('set_group_remark', params)
+  }
+
+  modify_group_remark(params: WSSendParam['modify_group_remark']) {
+    return this.send('modify_group_remark', params)
+  }
+
+  handle_quick_operation_async(params: WSSendParam['.handle_quick_operation_async']) {
+    return this.send('.handle_quick_operation_async', params)
+  }
+
+  rename_group_folder(params: WSSendParam['rename_group_folder']) {
+    return this.send('rename_group_folder', params)
+  }
+
+  request_upload_group_image(params: WSSendParam['request_upload_group_image']) {
+    return this.send('request_upload_group_image', params)
+  }
+
+  restart_me() {
+    return this.send('restart_me', {})
+  }
+
+  sanc_qrcode(params: WSSendParam['sanc_qrcode']) {
+    return this.send('sanc_qrcode', params)
+  }
+
+  send_forward_msg(params: WSSendParam['send_forward_msg']) {
+    return this.send('send_forward_msg', params)
+  }
+
+  send_group_forward_msg(params: WSSendParam['send_group_forward_msg']) {
+    return this.send('send_group_forward_msg', params)
+  }
+
+  send_group_message(params: WSSendParam['send_group_message']) {
+    return this.send('send_group_message', params)
+  }
+
+  send_group_msg(params: WSSendParam['send_group_msg']) {
+    return this.send('send_group_msg', params)
+  }
+
+  send_group_notice(params: WSSendParam['send_group_notice']) {
+    return this.send('send_group_notice', params)
+  }
+
+  send_group_announcement(params: WSSendParam['send_group_announcement']) {
+    return this.send('send_group_announcement', params)
+  }
+
+  send_group_sign(params: WSSendParam['send_group_sign']) {
+    return this.send('send_group_sign', params)
+  }
+
+  send_guild_message(params: WSSendParam['send_guild_message']) {
+    return this.send('send_guild_message', params)
+  }
+
+  send_guild_msg(params: WSSendParam['send_guild_msg']) {
+    return this.send('send_guild_msg', params)
+  }
+
+  send_guild_channel_msg(params: WSSendParam['send_guild_channel_msg']) {
+    return this.send('send_guild_channel_msg', params)
+  }
+
+  send_msg(params: WSSendParam['send_msg']) {
+    return this.send('send_msg', params)
+  }
+
+  send_message(params: WSSendParam['send_message']) {
+    return this.send('send_message', params)
+  }
+
+  send_msg_by_resid(params: WSSendParam['send_msg_by_resid']) {
+    return this.send('send_msg_by_resid', params)
+  }
+
+  send_private_forward_msg(params: WSSendParam['send_private_forward_msg']) {
+    return this.send('send_private_forward_msg', params)
+  }
+
+  send_private_msg(params: WSSendParam['send_private_msg']) {
+    return this.send('send_private_msg', params)
+  }
+
+  send_private_message(params: WSSendParam['send_private_message']) {
+    return this.send('send_private_message', params)
+  }
+
+  send_friend_msg(params: WSSendParam['send_friend_msg']) {
+    return this.send('send_friend_msg', params)
+  }
+
+  set_essence_msg(params: WSSendParam['set_essence_msg']) {
+    return this.send('set_essence_msg', params)
+  }
+
+  set_essence_message(params: WSSendParam['set_essence_message']) {
+    return this.send('set_essence_message', params)
+  }
+
+  set_friend_add_request(params: WSSendParam['set_friend_add_request']) {
+    return this.send('set_friend_add_request', params)
+  }
+
+  set_group_add_request(params: WSSendParam['set_group_add_request']) {
+    return this.send('set_group_add_request', params)
+  }
+
+  set_group_admin(params: WSSendParam['set_group_admin']) {
+    return this.send('set_group_admin', params)
+  }
+
+  set_group_comment_face(params: WSSendParam['set_group_comment_face']) {
+    return this.send('set_group_comment_face', params)
+  }
+
+  set_group_special_title(params: WSSendParam['set_group_special_title']) {
+    return this.send('set_group_special_title', params)
+  }
+
+  set_group_whole_ban(params: WSSendParam['set_group_whole_ban']) {
+    return this.send('set_group_whole_ban', params)
+  }
+
+  set_guild_member_role(params: WSSendParam['set_guild_member_role']) {
+    return this.send('set_guild_member_role', params)
+  }
+
+  _set_model_show(params: WSSendParam['_set_model_show']) {
+    return this.send('_set_model_show', params)
+  }
+
+  set_qq_profile(params: WSSendParam['set_qq_profile']) {
+    return this.send('set_qq_profile', params)
+  }
+
+  sign_ark_message(params: WSSendParam['sign_ark_message']) {
+    return this.send('sign_ark_message', params)
+  }
+
+  switch_account(params: WSSendParam['switch_account']) {
+    return this.send('switch_account', params)
+  }
+
+  update_guild_role(params: WSSendParam['update_guild_role']) {
+    return this.send('update_guild_role', params)
+  }
+
+  upload_file_to_shamrock(params: WSSendParam['upload_file_to_shamrock']) {
+    return this.send('upload_file_to_shamrock', params)
+  }
+
+  upload_group_file(params: WSSendParam['upload_group_file']) {
+    return this.send('upload_group_file', params)
+  }
+
+  upload_nt_resource(params: WSSendParam['upload_nt_resource']) {
+    return this.send('upload_nt_resource', params)
+  }
+
+  upload_nt_res(params: WSSendParam['upload_nt_res']) {
+    return this.send('upload_nt_res', params)
+  }
+
+  upload_private_file(params: WSSendParam['upload_private_file']) {
+    return this.send('upload_private_file', params)
   }
 }

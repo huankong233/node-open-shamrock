@@ -27,27 +27,25 @@ export interface APIRequest<T> {
   echo: string
 }
 
-export interface APISuccessResponse<T> {
+export interface APISuccessResponse<T, M> {
   status: 'ok'
   retcode: 0
-  msg: ''
-  wording: ''
   data: T
+  message: M
   echo: string
 }
 
 export interface APIErrorResponse<T> {
   status: 'failed'
   retcode: number // 返回码，0 为成功，非 0 为失败
-  msg: string // 错误信息
-  wording: string // 对错误的描述
   data: T
+  message: string // 错误信息
   echo: string
 }
 
 export interface ResponseHandler {
-  onSuccess: (json: APISuccessResponse<any>) => void
-  onFailure: (reason: APIErrorResponse<any>) => void
+  onSuccess: (response: any) => void
+  onFailure: (reason: any) => void
   message: APIRequest<any>
 }
 
@@ -414,8 +412,8 @@ export type SocketHandle = {
   socket: void | WSCloseRes | Error
 
   'api.preSend': APIRequest<any>
-  'api.response': APISuccessResponse<any> | APIErrorResponse<any>
-  api: APIRequest<any> | APISuccessResponse<any> | APIErrorResponse<any>
+  'api.response': APISuccessResponse<any, any> | APIErrorResponse<any>
+  api: APIRequest<any> | APISuccessResponse<any, any> | APIErrorResponse<any>
 
   'meta_event.lifecycle': LifeCycle
   'meta_event.heartbeat': HeartBeat
@@ -491,7 +489,7 @@ export type WSSendParam = {
     | { message_type: 'group'; group_id: number }
     | { message_type: 'private'; user_id: number }
   create_group_file_folder: { group_id: number; name: string }
-  create_guild_role: { guild_id: string; name: string; color: number; initial_users: number[] }
+  create_guild_role: { guild_id: string; name: string; color: number; initial_users: string[] }
   delete_essence_msg: { message_id: number }
   delete_essence_message: { message_id: number }
   delete_group_file: { group_id: number; file_id: string; busid: number }
@@ -615,7 +613,7 @@ export type WSSendParam = {
       at_sender?: boolean
       auto_reply?: boolean
       delete?: boolean
-      delete_delay?: number
+      delay?: number
       kick?: boolean
       ban?: boolean
       ban_duration?: number
@@ -1061,7 +1059,23 @@ export type WSSendParam = {
 }
 
 export type WSSendReturn = {
-  // get_login_info: LoginInfo
+  set_group_ban: APISuccessResponse<{}, '成功'>
+  clean_cache: APISuccessResponse<{}, '成功'>
+  clear_msgs: APISuccessResponse<{}, undefined>
+  create_group_file_folder: APISuccessResponse<
+    {
+      folder_id: string
+      parent_folder_id: string
+      folder_name: string
+      create_time: number
+      modify_time: number
+      creator_uin: number
+      modifier_uin: number
+    },
+    '成功'
+  >
+} & {
+  [type in string]: undefined
 }
 
 export interface LoginInfo {

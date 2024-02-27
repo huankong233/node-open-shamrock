@@ -22,7 +22,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "test": "tsx test.ts"
   },
   "dependencies": {
     "ws": "^8.16.0"
