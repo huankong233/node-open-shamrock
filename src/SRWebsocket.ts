@@ -91,7 +91,7 @@ export class SRWebsocket {
         this.eventSocket = undefined
       })
       .on('message', data => {
-        this.eventMessage(data)
+        this.#eventMessage(data)
       })
       .on('error', data => {
         this.eventBus.emit('socket.eventError', data)
@@ -111,14 +111,14 @@ export class SRWebsocket {
         this.apiSocket = undefined
       })
       .on('message', data => {
-        this.apiMessage(data)
+        this.#apiMessage(data)
       })
       .on('error', data => {
         this.eventBus.emit('socket.apiError', data)
       })
   }
 
-  eventMessage(data: Data) {
+  #eventMessage(data: Data) {
     data = Buffer.isBuffer(data) ? (data = data.toString()) : data
     if (typeof data !== 'string') return
 
@@ -137,7 +137,7 @@ export class SRWebsocket {
     this.eventBus.parseMessage(json)
   }
 
-  apiMessage(data: Data) {
+  #apiMessage(data: Data) {
     data = Buffer.isBuffer(data) ? (data = data.toString()) : data
     if (typeof data !== 'string') return
 
@@ -305,6 +305,9 @@ export class SRWebsocket {
     return this.send('create_group_file_folder', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   create_guild_role(params: WSSendParam['create_guild_role']) {
     return this.send('create_guild_role', params)
   }
@@ -325,6 +328,9 @@ export class SRWebsocket {
     return this.send('delete_group_folder', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   delete_guild_role(params: WSSendParam['delete_guild_role']) {
     return this.send('delete_guild_role', params)
   }
@@ -397,6 +403,9 @@ export class SRWebsocket {
     return this.send('get_friend_system_msg', {})
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_channel_list(params: WSSendParam['get_guild_channel_list']) {
     return this.send('get_guild_channel_list', params)
   }
@@ -437,30 +446,51 @@ export class SRWebsocket {
     return this.send('get_group_system_msg', {})
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_feeds(params: WSSendParam['get_guild_feeds']) {
     return this.send('get_guild_feeds', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_list(params: WSSendParam['get_guild_list']) {
     return this.send('get_guild_list', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_member_list(params: WSSendParam['get_guild_member_list']) {
     return this.send('get_guild_member_list', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_member_profile(params: WSSendParam['get_guild_member_profile']) {
     return this.send('get_guild_member_profile', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_meta_by_guest(params: WSSendParam['get_guild_meta_by_guest']) {
     return this.send('get_guild_meta_by_guest', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_roles(params: WSSendParam['get_guild_roles']) {
     return this.send('get_guild_roles', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   get_guild_service_profile() {
     return this.send('get_guild_service_profile', {})
   }
@@ -685,14 +715,23 @@ export class SRWebsocket {
     return this.send('send_group_sign', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   send_guild_message(params: WSSendParam['send_guild_message']) {
     return this.send('send_guild_message', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   send_guild_msg(params: WSSendParam['send_guild_msg']) {
     return this.send('send_guild_msg', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   send_guild_channel_msg(params: WSSendParam['send_guild_channel_msg']) {
     return this.send('send_guild_channel_msg', params)
   }
@@ -757,6 +796,9 @@ export class SRWebsocket {
     return this.send('set_group_whole_ban', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   set_guild_member_role(params: WSSendParam['set_guild_member_role']) {
     return this.send('set_guild_member_role', params)
   }
@@ -777,6 +819,9 @@ export class SRWebsocket {
     return this.send('switch_account', params)
   }
 
+  /**
+   * @deprecated 频道支持存在变动,请不要使用
+   */
   update_guild_role(params: WSSendParam['update_guild_role']) {
     return this.send('update_guild_role', params)
   }
