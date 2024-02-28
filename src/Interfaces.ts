@@ -485,17 +485,15 @@ export type MessageArray = MessageObject[]
 export type WSSendParam = {
   set_group_ban: { group_id: number; user_id: number; duration?: number }
   clean_cache: {}
-  clear_msgs:
+  clear_messages:
     | { message_type: 'group'; group_id: number }
     | { message_type: 'private'; user_id: number }
   create_group_file_folder: { group_id: number; name: string }
   create_guild_role: { guild_id: string; name: string; color: number; initial_users: string[] }
-  delete_essence_msg: { message_id: number }
   delete_essence_message: { message_id: number }
   delete_group_file: { group_id: number; file_id: string; busid: number }
   delete_group_folder: { group_id: number; folder_id: string }
   delete_guild_role: { guild_id: string; role_id: number }
-  delete_msg: { message_id: number }
   delete_message: { message_id: number }
   download_file: {
     url?: string
@@ -504,14 +502,14 @@ export type WSSendParam = {
     thread_cnt?: number
     headers?: string[] | string
   }
-  'fav.add_image_msg': {
+  'fav.add_image_message': {
     user_id: number
     nick: string
     group_name?: string
     group_id?: number
     file: string
   }
-  'fav.add_text_msg': {
+  'fav.add_text_message': {
     user_id: number
     nick: string
     group_name?: string
@@ -522,25 +520,22 @@ export type WSSendParam = {
   'fav.get_item_content': { id: number }
   'fav.get_item_list': { category: number; start_pos: number; page_size: number }
   get_cookies: { domain?: string }
-  get_cookie: { domain?: string }
   get_credentials: { domain?: string }
   get_csrf_token: { domain?: string }
   get_device_battery: {}
-  get_essence_msg_list: { group_id: number; page?: number; page_size?: number }
   get_essence_message_list: { group_id: number; page?: number; page_size?: number }
-  get_forward_msg: { id: number }
+  get_forward_message: { id: number }
   get_friend_list: Refresh
-  get_friend_system_msg: {}
+  get_friend_system_message: {}
   get_guild_channel_list: { guild_id: string } & Refresh
   get_group_file_system_info: { group_id: number }
   get_group_file_url: { group_id: number; file_id: string; busid: number }
-  get_group_msg_history: { group_id: number; count?: number; message_seq?: number }
-  _get_group_notice: { group_id: number }
+  get_group_message_history: { group_id: number; count?: number; message_seq?: number }
   get_group_notice: { group_id: number }
   get_group_at_all_remain: { group_id: number }
   get_group_root_files: { group_id: number }
   get_group_files_by_folder: { group_id: number; folder_id: string }
-  get_group_system_msg: {}
+  get_group_system_message: {}
   get_guild_feeds: { guild_id: string; channel_id?: string; from?: number }
   get_guild_list: { old_sdk?: boolean } & Refresh
   get_guild_member_list: { guild_id: string; all?: boolean; next_token?: string }
@@ -548,7 +543,7 @@ export type WSSendParam = {
   get_guild_meta_by_guest: { guild_id: string }
   get_guild_roles: { guild_id: string }
   get_guild_service_profile: {}
-  get_history_msg: (
+  get_history_message: (
     | { message_type: 'group'; group_id: number }
     | { message_type: 'private'; user_id: number }
   ) & { count: number; message_seq: number }
@@ -557,9 +552,7 @@ export type WSSendParam = {
   get_latest_events: {}
   get_login_info: {}
   get_model_show: { user_id?: number }
-  _get_model_show: { model: string }
-  get_msg: { message_id: number } | { msg_id: number }
-  get_message: { message_id: number } | { msg_id: number }
+  get_message: { message_id: number }
   get_not_joined_group_info: { group_id: number }
   _get_online_clients: {}
   get_user_info: { user_id: number } & Refresh
@@ -568,19 +561,15 @@ export type WSSendParam = {
   get_record: { file: string; out_format: string }
   get_self_info: {}
   get_status: {}
-  status: {}
   get_stranger_info: { user_id: number }
-  _get_stranger_info: { user_id: number }
   get_supported_actions: {}
   get_group_honor_info: { group_id: number } & Refresh
-  get_troop_honor_info: { group_id: number } & Refresh
   get_group_info: { group_id: number } & Refresh
   get_group_list: Refresh
   get_group_member_info: { user_id: number; group_id: number } & Refresh
   get_group_member_list: { group_id: number } & Refresh
   get_uid: { uin_list: number[] }
   get_uin_by_uid: { uid_list: string[] }
-  get_version_info: {}
   get_version: {}
   get_weather: { code: number } | { city: string }
   get_weather_city_code: { city: string }
@@ -589,21 +578,13 @@ export type WSSendParam = {
   set_group_kick: {
     group_id: number
     user_id: number
-    kick_msg?: string
+    kick_message?: string
     reject_add_request?: boolean
   }
-  kick_group_member: {
-    group_id: number
-    user_id: number
-    kick_msg?: string
-    reject_add_request?: boolean
-  }
-  leave_group: { group_id: number }
   set_group_leave: { group_id: number }
   set_group_card: { group_id: number; user_id: number; card?: string }
   set_group_name: { group_id: number; group_name: string }
   set_group_remark: { group_id: number; remark?: string }
-  modify_group_remark: { group_id: number; remark?: string }
   '.handle_quick_operation_async': {
     self_id: number
     context: SocketHandle['message']
@@ -629,7 +610,7 @@ export type WSSendParam = {
   }
   restart_me: {}
   sanc_qrcode: { pic: string }
-  send_forward_msg:
+  send_forward_message:
     | {
         message_type: 'group'
         group_id: number
@@ -694,7 +675,7 @@ export type WSSendParam = {
               }[]
         }
       }
-  send_group_forward_msg: {
+  send_group_forward_message: {
     group_id: number
     messages:
       | { id: number }[]
@@ -721,21 +702,6 @@ export type WSSendParam = {
         message: string
         autoEscape?: boolean
       }
-  send_group_msg:
-    | {
-        group_id: number
-        retry_cnt?: number
-        recall_duration?: number
-        message: MessageObject | MessageArray
-      }
-    | {
-        group_id: number
-        retry_cnt?: number
-        recall_duration?: number
-        message: string
-        autoEscape?: boolean
-      }
-  send_group_notice: { group_id: number; content: string; image?: string }
   send_group_announcement: { group_id: number; content: string; image?: string }
   send_group_sign: { group_id: number }
   send_guild_message:
@@ -744,22 +710,6 @@ export type WSSendParam = {
         channel_id: string
         retry_cnt?: number
         recall_duration?: number
-        message: MessageObject | MessageArray
-      }
-    | {
-        guild_id: string
-        channel_id: string
-        retry_cnt?: number
-        recall_duration?: number
-        message: string
-        autoEscape?: boolean
-      }
-  send_guild_msg:
-    | {
-        guild_id: string
-        channel_id: string
-        retry_cnt?: number
-        recall_duration?: number
         message: string | MessageObject | MessageArray
       }
     | {
@@ -769,83 +719,6 @@ export type WSSendParam = {
         recall_duration?: number
         message: string
         autoEscape?: boolean
-      }
-  send_guild_channel_msg:
-    | {
-        guild_id: string
-        channel_id: string
-        retry_cnt?: number
-        recall_duration?: number
-        message: string | MessageObject | MessageArray
-      }
-    | {
-        guild_id: string
-        channel_id: string
-        retry_cnt?: number
-        recall_duration?: number
-        message: string
-        autoEscape?: boolean
-      }
-  send_msg:
-    | {
-        message_type: 'group'
-        retry_cnt?: number
-        recall_duration?: number
-        group_id: number
-        messages: MessageObject | MessageArray
-      }
-    | {
-        message_type: 'group'
-        retry_cnt?: number
-        recall_duration?: number
-        group_id: number
-        auto_escape?: boolean
-        messages: string
-      }
-    | {
-        detail_type: 'group'
-        retry_cnt?: number
-        recall_duration?: number
-        group_id: number
-        messages: MessageObject | MessageArray
-      }
-    | {
-        detail_type: 'group'
-        retry_cnt?: number
-        recall_duration?: number
-        group_id: number
-        auto_escape?: boolean
-        messages: string
-      }
-    | {
-        message_type: 'private'
-        retry_cnt?: number
-        recall_duration?: number
-        user_id: number
-        messages: MessageObject | MessageArray
-      }
-    | {
-        message_type: 'private'
-        retry_cnt?: number
-        recall_duration?: number
-        user_id: number
-        auto_escape?: boolean
-        messages: string
-      }
-    | {
-        detail_type: 'private'
-        retry_cnt?: number
-        recall_duration?: number
-        user_id: number
-        messages: MessageObject | MessageArray
-      }
-    | {
-        detail_type: 'private'
-        retry_cnt?: number
-        recall_duration?: number
-        user_id: number
-        auto_escape?: boolean
-        messages: string
       }
   send_message:
     | {
@@ -908,12 +781,12 @@ export type WSSendParam = {
         auto_escape?: boolean
         messages: string
       }
-  send_msg_by_resid: {
+  send_message_by_resid: {
     res_id: string
     peer_id: string
     message_type: 'group' | 'private'
   }
-  send_private_forward_msg: {
+  send_private_forward_message: {
     user_id: number
     messages:
       | { id: number }[]
@@ -926,22 +799,6 @@ export type WSSendParam = {
           time?: number
         }[]
   }
-  send_private_msg:
-    | {
-        user_id: number | 'self'
-        group_id?: number
-        retry_cnt?: number
-        recall_duration?: number
-        message: MessageObject | MessageArray
-      }
-    | {
-        user_id: number | 'self'
-        group_id?: number
-        retry_cnt?: number
-        recall_duration?: number
-        auto_escape: boolean
-        message: string
-      }
   send_private_message:
     | {
         user_id: number | 'self'
@@ -958,40 +815,16 @@ export type WSSendParam = {
         auto_escape: boolean
         message: string
       }
-  send_friend_msg:
-    | {
-        user_id: number | 'self'
-        group_id?: number
-        retry_cnt?: number
-        recall_duration?: number
-        message: MessageObject | MessageArray
-      }
-    | {
-        user_id: number | 'self'
-        group_id?: number
-        retry_cnt?: number
-        recall_duration?: number
-        auto_escape: boolean
-        message: string
-      }
-  set_essence_msg: { message_id: number }
   set_essence_message: { message_id: number }
   set_friend_add_request: { flag: string; approve?: boolean; remark?: string; notSeen?: boolean }
   set_group_add_request: { flag: string; approve?: boolean; remark?: string; notSeen?: boolean }
   set_group_admin: { group_id: number; user_id: number; enable: boolean }
-  set_group_comment_face:
-    | {
-        group_id: number
-        message_id: number
-        face_id: number
-        is_set?: boolean
-      }
-    | {
-        group_id: number
-        msg_id: number
-        face_id: number
-        is_set?: boolean
-      }
+  set_group_comment_face: {
+    group_id: number
+    message_id: number
+    face_id: number
+    is_set?: boolean
+  }
   set_group_special_title: { group_id: number; user_id: number; special_title: string }
   set_group_whole_ban: { group_id: number; enable: boolean }
   set_guild_member_role:
@@ -1041,11 +874,6 @@ export type WSSendParam = {
     file_size?: string
   }
   upload_group_file: { group_id: number; file: string; name: string }
-  upload_nt_resource: {
-    file: string
-    message_type: 'group' | 'private' | 'guild'
-    file_type: 'file' | 'image' | 'pic' | 'video' | 'audio' | 'voice' | 'record' | string
-  }
   upload_nt_res: {
     file: string
     message_type: 'group' | 'private' | 'guild'
@@ -1061,7 +889,7 @@ export type WSSendParam = {
 export type WSSendReturn = {
   set_group_ban: APISuccessResponse<{}, '成功'>
   clean_cache: APISuccessResponse<{}, '成功'>
-  clear_msgs: APISuccessResponse<{}, undefined>
+  clear_messages: APISuccessResponse<{}, undefined>
   create_group_file_folder: APISuccessResponse<
     {
       folder_id: string

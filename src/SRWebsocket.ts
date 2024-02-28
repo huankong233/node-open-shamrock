@@ -297,8 +297,8 @@ export class SRWebsocket {
     return this.send('clean_cache', {})
   }
 
-  clear_msgs(params: WSSendParam['clear_msgs']) {
-    return this.send('clear_msgs', params)
+  clear_messages(params: WSSendParam['clear_messages']) {
+    return this.send('clear_messages', params)
   }
 
   create_group_file_folder(params: WSSendParam['create_group_file_folder']) {
@@ -310,10 +310,6 @@ export class SRWebsocket {
    */
   create_guild_role(params: WSSendParam['create_guild_role']) {
     return this.send('create_guild_role', params)
-  }
-
-  delete_essence_msg(params: WSSendParam['delete_essence_msg']) {
-    return this.send('delete_essence_msg', params)
   }
 
   delete_essence_message(params: WSSendParam['delete_essence_message']) {
@@ -335,10 +331,6 @@ export class SRWebsocket {
     return this.send('delete_guild_role', params)
   }
 
-  delete_msg(params: WSSendParam['delete_msg']) {
-    return this.send('delete_msg', params)
-  }
-
   delete_message(params: WSSendParam['delete_message']) {
     return this.send('delete_message', params)
   }
@@ -347,12 +339,12 @@ export class SRWebsocket {
     return this.send('download_file', params)
   }
 
-  fav_add_image_msg(params: WSSendParam['fav.add_image_msg']) {
-    return this.send('fav.add_image_msg', params)
+  fav_add_image_message(params: WSSendParam['fav.add_image_message']) {
+    return this.send('fav.add_image_message', params)
   }
 
-  fav_add_text_msg(params: WSSendParam['fav.add_text_msg']) {
-    return this.send('fav.add_text_msg', params)
+  fav_add_text_message(params: WSSendParam['fav.add_text_message']) {
+    return this.send('fav.add_text_message', params)
   }
 
   fav_get_item_content(params: WSSendParam['fav.get_item_content']) {
@@ -367,10 +359,6 @@ export class SRWebsocket {
     return this.send('get_cookies', params)
   }
 
-  get_cookie(params: WSSendParam['get_cookie']) {
-    return this.send('get_cookie', params)
-  }
-
   get_credentials(params: WSSendParam['get_credentials']) {
     return this.send('get_credentials', params)
   }
@@ -383,24 +371,20 @@ export class SRWebsocket {
     return this.send('get_device_battery', {})
   }
 
-  get_essence_msg_list(params: WSSendParam['get_essence_msg_list']) {
-    return this.send('get_essence_msg_list', params)
-  }
-
   get_essence_message_list(params: WSSendParam['get_essence_message_list']) {
     return this.send('get_essence_message_list', params)
   }
 
-  get_forward_msg(params: WSSendParam['get_forward_msg']) {
-    return this.send('get_forward_msg', params)
+  get_forward_message(params: WSSendParam['get_forward_message']) {
+    return this.send('get_forward_message', params)
   }
 
   get_friend_list(params: WSSendParam['get_friend_list']) {
     return this.send('get_friend_list', params)
   }
 
-  get_friend_system_msg() {
-    return this.send('get_friend_system_msg', {})
+  get_friend_system_message() {
+    return this.send('get_friend_system_message', {})
   }
 
   /**
@@ -418,12 +402,8 @@ export class SRWebsocket {
     return this.send('get_group_file_url', params)
   }
 
-  get_group_msg_history(params: WSSendParam['get_group_msg_history']) {
-    return this.send('get_group_msg_history', params)
-  }
-
-  _get_group_notice(params: WSSendParam['_get_group_notice']) {
-    return this.send('_get_group_notice', params)
+  get_group_message_history(params: WSSendParam['get_group_message_history']) {
+    return this.send('get_group_message_history', params)
   }
 
   get_group_notice(params: WSSendParam['get_group_notice']) {
@@ -442,8 +422,8 @@ export class SRWebsocket {
     return this.send('get_group_files_by_folder', params)
   }
 
-  get_group_system_msg() {
-    return this.send('get_group_system_msg', {})
+  get_group_system_message() {
+    return this.send('get_group_system_message', {})
   }
 
   /**
@@ -495,8 +475,8 @@ export class SRWebsocket {
     return this.send('get_guild_service_profile', {})
   }
 
-  get_history_msg(params: WSSendParam['get_history_msg']) {
-    return this.send('get_history_msg', params)
+  get_history_message(params: WSSendParam['get_history_message']) {
+    return this.send('get_history_message', params)
   }
 
   get_http_cookies(params: WSSendParam['get_http_cookies']) {
@@ -517,14 +497,6 @@ export class SRWebsocket {
 
   get_model_show(params: WSSendParam['get_model_show']) {
     return this.send('get_model_show', params)
-  }
-
-  _get_model_show(params: WSSendParam['_get_model_show']) {
-    return this.send('_get_model_show', params)
-  }
-
-  get_msg(params: WSSendParam['get_msg']) {
-    return this.send('get_msg', params)
   }
 
   get_message(params: WSSendParam['get_message']) {
@@ -563,16 +535,8 @@ export class SRWebsocket {
     return this.send('get_status', {})
   }
 
-  status() {
-    return this.send('status', {})
-  }
-
   get_stranger_info(params: WSSendParam['get_stranger_info']) {
     return this.send('get_stranger_info', params)
-  }
-
-  _get_stranger_info(params: WSSendParam['_get_stranger_info']) {
-    return this.send('_get_stranger_info', params)
   }
 
   get_supported_actions({}) {
@@ -581,10 +545,6 @@ export class SRWebsocket {
 
   get_group_honor_info(params: WSSendParam['get_group_honor_info']) {
     return this.send('get_group_honor_info', params)
-  }
-
-  get_troop_honor_info(params: WSSendParam['get_troop_honor_info']) {
-    return this.send('get_troop_honor_info', params)
   }
 
   get_group_info(params: WSSendParam['get_group_info']) {
@@ -611,10 +571,6 @@ export class SRWebsocket {
     return this.send('get_uin_by_uid', params)
   }
 
-  get_version_info() {
-    return this.send('get_version_info', {})
-  }
-
   get_version() {
     return this.send('get_version', {})
   }
@@ -639,14 +595,6 @@ export class SRWebsocket {
     return this.send('set_group_kick', params)
   }
 
-  kick_group_member(params: WSSendParam['kick_group_member']) {
-    return this.send('kick_group_member', params)
-  }
-
-  leave_group(params: WSSendParam['leave_group']) {
-    return this.send('leave_group', params)
-  }
-
   set_group_leave(params: WSSendParam['set_group_leave']) {
     return this.send('set_group_leave', params)
   }
@@ -661,10 +609,6 @@ export class SRWebsocket {
 
   set_group_remark(params: WSSendParam['set_group_remark']) {
     return this.send('set_group_remark', params)
-  }
-
-  modify_group_remark(params: WSSendParam['modify_group_remark']) {
-    return this.send('modify_group_remark', params)
   }
 
   handle_quick_operation_async(params: WSSendParam['.handle_quick_operation_async']) {
@@ -687,24 +631,16 @@ export class SRWebsocket {
     return this.send('sanc_qrcode', params)
   }
 
-  send_forward_msg(params: WSSendParam['send_forward_msg']) {
-    return this.send('send_forward_msg', params)
+  send_forward_message(params: WSSendParam['send_forward_message']) {
+    return this.send('send_forward_message', params)
   }
 
-  send_group_forward_msg(params: WSSendParam['send_group_forward_msg']) {
-    return this.send('send_group_forward_msg', params)
+  send_group_forward_message(params: WSSendParam['send_group_forward_message']) {
+    return this.send('send_group_forward_message', params)
   }
 
   send_group_message(params: WSSendParam['send_group_message']) {
     return this.send('send_group_message', params)
-  }
-
-  send_group_msg(params: WSSendParam['send_group_msg']) {
-    return this.send('send_group_msg', params)
-  }
-
-  send_group_notice(params: WSSendParam['send_group_notice']) {
-    return this.send('send_group_notice', params)
   }
 
   send_group_announcement(params: WSSendParam['send_group_announcement']) {
@@ -722,50 +658,20 @@ export class SRWebsocket {
     return this.send('send_guild_message', params)
   }
 
-  /**
-   * @deprecated 频道支持存在变动,请不要使用
-   */
-  send_guild_msg(params: WSSendParam['send_guild_msg']) {
-    return this.send('send_guild_msg', params)
-  }
-
-  /**
-   * @deprecated 频道支持存在变动,请不要使用
-   */
-  send_guild_channel_msg(params: WSSendParam['send_guild_channel_msg']) {
-    return this.send('send_guild_channel_msg', params)
-  }
-
-  send_msg(params: WSSendParam['send_msg']) {
-    return this.send('send_msg', params)
-  }
-
   send_message(params: WSSendParam['send_message']) {
     return this.send('send_message', params)
   }
 
-  send_msg_by_resid(params: WSSendParam['send_msg_by_resid']) {
-    return this.send('send_msg_by_resid', params)
+  send_message_by_resid(params: WSSendParam['send_message_by_resid']) {
+    return this.send('send_message_by_resid', params)
   }
 
-  send_private_forward_msg(params: WSSendParam['send_private_forward_msg']) {
-    return this.send('send_private_forward_msg', params)
-  }
-
-  send_private_msg(params: WSSendParam['send_private_msg']) {
-    return this.send('send_private_msg', params)
+  send_private_forward_message(params: WSSendParam['send_private_forward_message']) {
+    return this.send('send_private_forward_message', params)
   }
 
   send_private_message(params: WSSendParam['send_private_message']) {
     return this.send('send_private_message', params)
-  }
-
-  send_friend_msg(params: WSSendParam['send_friend_msg']) {
-    return this.send('send_friend_msg', params)
-  }
-
-  set_essence_msg(params: WSSendParam['set_essence_msg']) {
-    return this.send('set_essence_msg', params)
   }
 
   set_essence_message(params: WSSendParam['set_essence_message']) {
@@ -832,10 +738,6 @@ export class SRWebsocket {
 
   upload_group_file(params: WSSendParam['upload_group_file']) {
     return this.send('upload_group_file', params)
-  }
-
-  upload_nt_resource(params: WSSendParam['upload_nt_resource']) {
-    return this.send('upload_nt_resource', params)
   }
 
   upload_nt_res(params: WSSendParam['upload_nt_res']) {
