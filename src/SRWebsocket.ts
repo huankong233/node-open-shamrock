@@ -1,5 +1,6 @@
 import type {
   APIRequest,
+  APISuccessResponse,
   EventHandle,
   ResponseHandler,
   SRWebsocketOptions,
@@ -17,7 +18,7 @@ import { JSONParse, logger } from './utils.ts'
 export class SRWebsocket {
   debug: boolean
 
-  eventBus: SREventBus
+  #eventBus: SREventBus
   SRWebsocketOptions: SRWebsocketOptionsBaseUrl
   eventSocket?: WebSocket
   apiSocket?: WebSocket
@@ -58,7 +59,7 @@ export class SRWebsocket {
       }
     }
 
-    this.eventBus = new SREventBus(this)
+    this.#eventBus = new SREventBus(this)
     this.echoMap = new Map()
     this.debug = debug
   }
@@ -81,40 +82,40 @@ export class SRWebsocket {
   connectEvent() {
     const url = `${this.SRWebsocketOptions.baseUrl}/?access_token=${this.SRWebsocketOptions.accessToken}`
     this.eventSocket = new WebSocket(url, this.SRWebsocketOptions.ClientOptions)
-    this.eventBus.emit('socket.eventConnecting', undefined)
+    this.#eventBus.emit('socket.eventConnecting', undefined)
     this.eventSocket
       .on('open', () => {
-        this.eventBus.emit('socket.eventOpen', undefined)
+        this.#eventBus.emit('socket.eventOpen', undefined)
       })
       .on('close', (code, reason) => {
-        this.eventBus.emit('socket.eventClose', { code, reason })
+        this.#eventBus.emit('socket.eventClose', { code, reason })
         this.eventSocket = undefined
       })
       .on('message', data => {
         this.#eventMessage(data)
       })
       .on('error', data => {
-        this.eventBus.emit('socket.eventError', data)
+        this.#eventBus.emit('socket.eventError', data)
       })
   }
 
   connectApi() {
     const url = `${this.SRWebsocketOptions.baseUrl}/api?access_token=${this.SRWebsocketOptions.accessToken}`
     this.apiSocket = new WebSocket(url, this.SRWebsocketOptions.ClientOptions)
-    this.eventBus.emit('socket.apiConnecting', undefined)
+    this.#eventBus.emit('socket.apiConnecting', undefined)
     this.apiSocket
       .on('open', () => {
-        this.eventBus.emit('socket.apiOpen', undefined)
+        this.#eventBus.emit('socket.apiOpen', undefined)
       })
       .on('close', (code, reason) => {
-        this.eventBus.emit('socket.apiClose', { code, reason })
+        this.#eventBus.emit('socket.apiClose', { code, reason })
         this.apiSocket = undefined
       })
       .on('message', data => {
         this.#apiMessage(data)
       })
       .on('error', data => {
-        this.eventBus.emit('socket.apiError', data)
+        this.#eventBus.emit('socket.apiError', data)
       })
   }
 
@@ -134,7 +135,7 @@ export class SRWebsocket {
       logger.dir(json)
     }
 
-    this.eventBus.parseMessage(json)
+    this.#eventBus.parseMessage(json)
   }
 
   #apiMessage(data: Data) {
@@ -165,7 +166,7 @@ export class SRWebsocket {
       handler.onFailure(json)
     }
 
-    this.eventBus.emit('api.response', json)
+    this.#eventBus.emit('api.response', json)
   }
 
   disconnectEvent() {
@@ -187,10 +188,10 @@ export class SRWebsocket {
    * @param method API 端点
    * @param params 请求参数
    */
-  async send<T extends keyof WSSendParam>(
+  send<T extends keyof WSSendParam>(
     method: T,
     params: WSSendParam[T]
-  ): Promise<WSSendReturn[T]> {
+  ): Promise<APISuccessResponse<WSSendReturn[T]>> {
     const echo = randomUUID({ disableEntropyCache: true })
 
     const message: APIRequest<WSSendParam[T]> = {
@@ -221,7 +222,7 @@ export class SRWebsocket {
         onFailure
       })
 
-      this.eventBus.emit('api.preSend', message)
+      this.#eventBus.emit('api.preSend', message)
 
       if (this.apiSocket === undefined) {
         reject({
@@ -252,7 +253,7 @@ export class SRWebsocket {
    * @return 用于当作参数调用 [off]{@link off} 解除监听
    */
   on<T extends keyof SocketHandle>(event: T, handle: EventHandle<T>): this {
-    this.eventBus.on(event, handle)
+    this.#eventBus.on(event, handle)
     return this
   }
 
@@ -263,7 +264,7 @@ export class SRWebsocket {
    * @return 用于当作参数调用 [off]{@link off} 解除监听
    */
   once<T extends keyof SocketHandle>(event: T, handle: EventHandle<T>): this {
-    this.eventBus.once(event, handle)
+    this.#eventBus.once(event, handle)
     return this
   }
 
@@ -273,7 +274,7 @@ export class SRWebsocket {
    * @param handle
    */
   off<T extends keyof SocketHandle>(event: T, handle: EventHandle<T>): this {
-    this.eventBus.off(event, handle)
+    this.#eventBus.off(event, handle)
     return this
   }
 
@@ -283,7 +284,7 @@ export class SRWebsocket {
    * @param context
    */
   emit<T extends keyof SocketHandle>(type: T, context: SocketHandle[T]): this {
-    this.eventBus.emit(type, context)
+    this.#eventBus.emit(type, context)
     return this
   }
 
@@ -337,22 +338,6 @@ export class SRWebsocket {
 
   download_file(params: WSSendParam['download_file']) {
     return this.send('download_file', params)
-  }
-
-  fav_add_image_message(params: WSSendParam['fav.add_image_message']) {
-    return this.send('fav.add_image_message', params)
-  }
-
-  fav_add_text_message(params: WSSendParam['fav.add_text_message']) {
-    return this.send('fav.add_text_message', params)
-  }
-
-  fav_get_item_content(params: WSSendParam['fav.get_item_content']) {
-    return this.send('fav.get_item_content', params)
-  }
-
-  fav_get_item_list(params: WSSendParam['fav.get_item_list']) {
-    return this.send('fav.get_item_list', params)
   }
 
   get_cookies(params: WSSendParam['get_cookies']) {
@@ -479,6 +464,9 @@ export class SRWebsocket {
     return this.send('get_history_message', params)
   }
 
+  /**
+   * @warning 这个方法并未出现在官方文档内，未知作用
+   */
   get_http_cookies(params: WSSendParam['get_http_cookies']) {
     return this.send('get_http_cookies', params)
   }
@@ -487,6 +475,9 @@ export class SRWebsocket {
     return this.send('get_image', params)
   }
 
+  /**
+   * @warning 方法返回的数据锁定为 空数组
+   */
   get_latest_events() {
     return this.send('get_latest_events', {})
   }
@@ -495,6 +486,13 @@ export class SRWebsocket {
     return this.send('get_login_info', {})
   }
 
+  _get_model_show(params: WSSendParam['_get_model_show']) {
+    return this.send('_get_model_show', params)
+  }
+
+  /**
+   * @warning 这个方法并未出现在官方文档内，未知作用
+   */
   get_model_show(params: WSSendParam['get_model_show']) {
     return this.send('get_model_show', params)
   }
@@ -511,12 +509,11 @@ export class SRWebsocket {
     return this.send('_get_online_clients', {})
   }
 
+  /**
+   * @warning 这个方法并未出现在官方文档内，未知作用
+   */
   get_user_info(params: WSSendParam['get_user_info']) {
     return this.send('get_user_info', params)
-  }
-
-  get_profile_card(params: WSSendParam['get_profile_card']) {
-    return this.send('get_profile_card', params)
   }
 
   get_prohibited_member_list(params: WSSendParam['get_prohibited_member_list']) {
@@ -539,7 +536,7 @@ export class SRWebsocket {
     return this.send('get_stranger_info', params)
   }
 
-  get_supported_actions({}) {
+  get_supported_actions() {
     return this.send('get_supported_actions', {})
   }
 
@@ -603,6 +600,9 @@ export class SRWebsocket {
     return this.send('set_group_card', params)
   }
 
+  /**
+   * @warning 无效果并且没有返回数据
+   */
   set_group_name(params: WSSendParam['set_group_name']) {
     return this.send('set_group_name', params)
   }
@@ -612,7 +612,12 @@ export class SRWebsocket {
   }
 
   handle_quick_operation_async(params: WSSendParam['.handle_quick_operation_async']) {
-    return this.send('.handle_quick_operation_async', params)
+    const self_id = this.#eventBus.status.self.user_id
+    return this.send('.handle_quick_operation_async', {
+      self_id: params.self_id ?? self_id,
+      context: params.context,
+      operation: params.operation
+    })
   }
 
   rename_group_folder(params: WSSendParam['rename_group_folder']) {
@@ -627,8 +632,8 @@ export class SRWebsocket {
     return this.send('restart_me', {})
   }
 
-  sanc_qrcode(params: WSSendParam['sanc_qrcode']) {
-    return this.send('sanc_qrcode', params)
+  scan_qrcode(params: WSSendParam['scan_qrcode']) {
+    return this.send('scan_qrcode', params)
   }
 
   send_forward_message(params: WSSendParam['send_forward_message']) {
@@ -647,15 +652,15 @@ export class SRWebsocket {
     return this.send('send_group_announcement', params)
   }
 
-  send_group_sign(params: WSSendParam['send_group_sign']) {
-    return this.send('send_group_sign', params)
-  }
-
   /**
    * @deprecated 频道支持存在变动,请不要使用
    */
   send_guild_message(params: WSSendParam['send_guild_message']) {
     return this.send('send_guild_message', params)
+  }
+
+  send_group_sign(params: WSSendParam['send_group_sign']) {
+    return this.send('send_group_sign', params)
   }
 
   send_message(params: WSSendParam['send_message']) {
@@ -717,6 +722,9 @@ export class SRWebsocket {
     return this.send('set_qq_profile', params)
   }
 
+  /**
+   * @deprecated 暂未实现
+   */
   sign_ark_message(params: WSSendParam['sign_ark_message']) {
     return this.send('sign_ark_message', params)
   }
