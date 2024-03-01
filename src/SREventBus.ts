@@ -2,7 +2,7 @@ import type { SocketHandle, Status } from './Interfaces.ts'
 import type { SRWebsocket } from './SRWebsocket.ts'
 
 import { EventEmitter } from 'events'
-import { logger } from './utils.ts'
+import { logger } from './Utils.ts'
 
 export class SREventBus extends EventEmitter implements EventEmitter {
   _events: { [key in keyof SocketHandle]?: Function[] | Function }
@@ -66,7 +66,7 @@ export class SREventBus extends EventEmitter implements EventEmitter {
     const messageType = json['message_type']
     switch (messageType) {
       case 'private':
-        return this.emit('message.private', json)
+        return this.emit('message.private', json.data)
       case 'group':
         return this.emit('message.group', json)
       case 'guild':

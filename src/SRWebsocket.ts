@@ -13,7 +13,7 @@ import type {
 import WebSocket, { Data } from 'ws'
 import { randomUUID } from 'crypto'
 import { SREventBus } from './SREventBus.ts'
-import { JSONParse, logger } from './utils.ts'
+import { JSONParse, logger } from './Utils.ts'
 
 export class SRWebsocket {
   debug: boolean
@@ -120,7 +120,7 @@ export class SRWebsocket {
   }
 
   #eventMessage(data: Data) {
-    data = Buffer.isBuffer(data) ? (data = data.toString()) : data
+    data = Buffer.isBuffer(data) ? data.toString() : data
     if (typeof data !== 'string') return
 
     let json
@@ -139,7 +139,7 @@ export class SRWebsocket {
   }
 
   #apiMessage(data: Data) {
-    data = Buffer.isBuffer(data) ? (data = data.toString()) : data
+    data = Buffer.isBuffer(data) ? data.toString() : data
     if (typeof data !== 'string') return
 
     let json
@@ -208,7 +208,7 @@ export class SRWebsocket {
     return new Promise((resolve, reject) => {
       const onSuccess = (response: any) => {
         this.echoMap.delete(echo)
-        return resolve(response)
+        return resolve(response.data)
       }
 
       const onFailure = (reason: any) => {
@@ -340,6 +340,18 @@ export class SRWebsocket {
     return this.send('download_file', params)
   }
 
+  fav_add_image_message(params: WSSendParam['fav.add_image_message']) {
+    return this.send('fav.add_image_message', params)
+  }
+
+  fav_get_item_content(params: WSSendParam['fav.get_item_content']) {
+    return this.send('fav.get_item_content', params)
+  }
+
+  fav_get_item_list(params: WSSendParam['fav.get_item_list']) {
+    return this.send('fav.get_item_list', params)
+  }
+
   get_cookies(params: WSSendParam['get_cookies']) {
     return this.send('get_cookies', params)
   }
@@ -465,7 +477,7 @@ export class SRWebsocket {
   }
 
   /**
-   * @warning 这个方法并未出现在官方文档内，未知作用
+   * @warning 该接口并未出现在官方文档内，未知作用
    */
   get_http_cookies(params: WSSendParam['get_http_cookies']) {
     return this.send('get_http_cookies', params)
@@ -486,15 +498,15 @@ export class SRWebsocket {
     return this.send('get_login_info', {})
   }
 
-  _get_model_show(params: WSSendParam['_get_model_show']) {
-    return this.send('_get_model_show', params)
-  }
-
   /**
-   * @warning 这个方法并未出现在官方文档内，未知作用
+   * @warning 该接口并未出现在官方文档内，未知作用
    */
   get_model_show(params: WSSendParam['get_model_show']) {
     return this.send('get_model_show', params)
+  }
+
+  _get_model_show(params: WSSendParam['_get_model_show']) {
+    return this.send('_get_model_show', params)
   }
 
   get_message(params: WSSendParam['get_message']) {
@@ -510,7 +522,7 @@ export class SRWebsocket {
   }
 
   /**
-   * @warning 这个方法并未出现在官方文档内，未知作用
+   * @warning 该接口并未出现在官方文档内，未知作用
    */
   get_user_info(params: WSSendParam['get_user_info']) {
     return this.send('get_user_info', params)
@@ -632,6 +644,9 @@ export class SRWebsocket {
     return this.send('restart_me', {})
   }
 
+  /**
+   * @warning 该接口并未出现在官方文档内，未知作用
+   */
   scan_qrcode(params: WSSendParam['scan_qrcode']) {
     return this.send('scan_qrcode', params)
   }
@@ -652,6 +667,10 @@ export class SRWebsocket {
     return this.send('send_group_announcement', params)
   }
 
+  send_group_sign(params: WSSendParam['send_group_sign']) {
+    return this.send('send_group_sign', params)
+  }
+
   /**
    * @deprecated 频道支持存在变动,请不要使用
    */
@@ -659,8 +678,11 @@ export class SRWebsocket {
     return this.send('send_guild_message', params)
   }
 
-  send_group_sign(params: WSSendParam['send_group_sign']) {
-    return this.send('send_group_sign', params)
+  /**
+   * @warning 此方法锁定返回成功
+   */
+  send_like(params: WSSendParam['send_like']) {
+    return this.send('send_like', params)
   }
 
   send_message(params: WSSendParam['send_message']) {
@@ -746,6 +768,10 @@ export class SRWebsocket {
 
   upload_group_file(params: WSSendParam['upload_group_file']) {
     return this.send('upload_group_file', params)
+  }
+
+  upload_multi_message(params: WSSendParam['upload_multi_message']) {
+    return this.send('upload_multi_message', params)
   }
 
   upload_nt_res(params: WSSendParam['upload_nt_res']) {

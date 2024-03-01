@@ -477,7 +477,7 @@ export interface Refresh {
 
 export interface MessageObject {
   type: string
-  data: { [key: string]: string | number }
+  data: { [key: string]: any }
 }
 
 export type MessageArray = MessageObject[]
@@ -501,6 +501,29 @@ export type WSSendParam = {
     base64?: string
     thread_cnt?: number
     headers?: string[] | string
+  }
+  'fav.add_image_message': {
+    user_id: number
+    nick: string
+    group_name?: string
+    group_id?: number
+    file: string
+  }
+  'fav.add_text_message': {
+    user_id: number
+    nick: string
+    group_name?: string
+    group_id?: number
+    time?: number
+    content: string
+  }
+  'fav.get_item_content': {
+    id: string
+  }
+  'fav.get_item_list': {
+    category: number
+    start_pos: number
+    page_size: number
   }
   get_cookies: { domain?: string }
   get_credentials: { domain?: string }
@@ -608,11 +631,13 @@ export type WSSendParam = {
     | {
         message_type: 'group'
         group_id: number
+        retry_cnt?: number
         messages: {
+          type: 'node'
           data:
             | { id: number }
             | {
-                content: string
+                content: string | MessageObject | MessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -624,11 +649,13 @@ export type WSSendParam = {
     | {
         message_type: 'private'
         user_id: number
+        retry_cnt?: number
         messages: {
+          type: 'node'
           data:
             | { id: number }[]
             | {
-                content: string
+                content: string | MessageObject | MessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -640,10 +667,11 @@ export type WSSendParam = {
   send_group_forward_message: {
     group_id: number
     messages: {
+      type: 'node'
       data:
         | { id: number }[]
         | {
-            content: string
+            content: string | MessageObject | MessageArray
             uin?: number
             uid?: string
             name?: string
@@ -684,6 +712,10 @@ export type WSSendParam = {
         message: string
         autoEscape?: boolean
       }
+  send_like: {
+    times: number
+    user_id: number
+  }
   send_message:
     | {
         message_type: 'group'
@@ -810,6 +842,41 @@ export type WSSendParam = {
     file_size?: string
   }
   upload_group_file: { group_id: number; file: string; name: string }
+  upload_multi_message:
+    | {
+        message_type: 'group'
+        group_id: number
+        retry_cnt?: number
+        messages: {
+          data:
+            | { id: number }
+            | {
+                content: string
+                uin?: number
+                uid?: string
+                name?: string
+                seq?: number
+                time?: number
+              }
+        }[]
+      }
+    | {
+        message_type: 'private'
+        user_id: number
+        retry_cnt?: number
+        messages: {
+          data:
+            | { id: number }[]
+            | {
+                content: string
+                uin?: number
+                uid?: string
+                name?: string
+                seq?: number
+                time?: number
+              }
+        }[]
+      }
   upload_nt_res: {
     file: string
     message_type?: 'group' | 'private' | 'guild'
@@ -841,9 +908,21 @@ export type WSSendReturn = {
   delete_group_folder: {}
   delete_guild_role: undefined
   delete_message: {}
-  download_file: {
-    file: string
-    md5: string
+  download_file: { file: string; md5: string }
+  'fav.add_image_message': { picUrl: string; picId: string; id: string }
+  'fav.add_text_message': { id: string }
+  'fav.get_item_content': { content: string }
+  'fav.get_item_list': {
+    items: {
+      id: string
+      authorType: number
+      author: number
+      authorName: string
+      groupName: string
+      groupId: number
+      clientVersion: string
+      time: number
+    }[]
   }
   get_cookies: {
     cookies: string
@@ -958,7 +1037,6 @@ export type WSSendReturn = {
       }[]
     }
   }[]
-
   get_group_at_all_remain: {
     can_at_all: boolean
     remain_at_all_count_for_group: number
@@ -1002,64 +1080,46 @@ export type WSSendReturn = {
   get_guild_roles: undefined
   get_guild_service_profile: undefined
   get_history_message: {
-    messages:
+    messages: ((
       | {
-          time: number
           message_type: 'group'
-          message_id: number
-          message_id_qq: bigint
-          message_seq: number
-          real_id: number
-          sender: {
-            user_id: number
-            nickname: string
-            sex: 'male' | 'female' | 'unknown'
-            age: number
-            uid: string
-            tiny_id: string
-          }
-          message: MessageArray
           group_id: number
-          peer_id: number
-        }[]
+        }
       | {
-          time: number
           message_type: 'private'
-          message_id: number
-          message_id_qq: bigint
-          message_seq: number
-          real_id: number
-          sender: {
-            user_id: number
-            nickname: string
-            sex: 'male' | 'female' | 'unknown'
-            age: number
-            uid: string
-            tiny_id: string
-          }
-          message: MessageArray
-          peer_id: number
           target_id: number
-        }[]
+        }
+    ) & {
+      time: number
+      message_id: number
+      message_id_qq: bigint
+      message_seq: number
+      real_id: number
+      sender: {
+        user_id: number
+        nickname: string
+        sex: 'male' | 'female' | 'unknown'
+        age: number
+        uid: string
+        tiny_id: string
+      }
+      message: MessageArray
+      peer_id: number
+    })[]
   }
-  get_http_cookies: undefined
-  get_image: {
-    size: number
-    filename: string
-    url: string
+  get_http_cookies: {
+    token: string
+    cookies: string
+    bigdata_ticket: {
+      key: string
+      sig: string
+    }
   }
+  get_image: { size: number; filename: string; url: string }
   get_latest_events: {}
-  get_login_info: {
-    user_id: number
-    nickname: string
-  }
-  _get_model_show: {
-    variants: {
-      model_show: string
-      need_pay: boolean
-    }[]
-  }
+  get_login_info: { user_id: number; nickname: string }
   get_model_show: undefined
+  _get_model_show: { variants: { model_show: string; need_pay: boolean }[] }
   get_message: {
     time: number
     message_type: 'group' | 'private'
@@ -1288,13 +1348,11 @@ export type WSSendReturn = {
   }
   get_weather_city_code: { adcode: number; province: string; city: string }[]
   poke: {}
-  is_blacklist_uin: {
-    is: boolean
-  }
+  is_blacklist_uin: { is: boolean }
   set_group_kick: {}
   set_group_leave: {}
   set_group_card: {}
-  set_group_name: undefined
+  set_group_name: {}
   set_group_remark: {}
   '.handle_quick_operation_async': {}
   rename_group_folder: {}
@@ -1320,14 +1378,12 @@ export type WSSendReturn = {
     time: number
   }
   send_group_announcement: boolean
-  send_guild_message: undefined
   send_group_sign: {}
+  send_guild_message: undefined
+  send_like: {}
   send_message: { message_id: number; time: number }
   send_message_by_resid: { message_id: number; res_id: string }
-  send_private_forward_message: {
-    message_id: number
-    res_id: string
-  }
+  send_private_forward_message: { message_id: number; res_id: string }
   send_private_message: { message_id: number; res_id: string }
   set_essence_message: {}
   set_friend_add_request: {}
@@ -1348,6 +1404,12 @@ export type WSSendReturn = {
     path: string
   }
   upload_group_file: FileAndFolder
+  upload_multi_message: {
+    resId: string
+    filename: string
+    summary: string
+    desc: string
+  }
   upload_nt_res: {
     files: {
       mode_id: number
