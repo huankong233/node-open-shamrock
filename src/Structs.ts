@@ -60,6 +60,86 @@ export interface Receive {
       strength: number
     }
   }
+  // 不支持 share
+  // share: {
+  //   type: 'share'
+  //   data: {}
+  // }
+  contact: {
+    type: 'contact'
+    data: {
+      type: 'private' | 'group'
+      id: string
+    }
+  }
+  location: {
+    type: 'location'
+    data: {
+      lon: string
+      title: string
+      lat: string
+      content: string
+    }
+  }
+  // 不支持 music
+  // music: {
+  //   type: 'music'
+  //   data: {}
+  // }
+  reply: {
+    type: 'reply'
+    data: {
+      id: number
+    }
+  }
+  // 不支持 touch
+  // touch: {
+  //   type: 'touch'
+  //   data: {}
+  // }
+  // 不支持 weather
+  // weather: {
+  //   type: 'weather'
+  //   data: {}
+  // }
+  json: {
+    type: 'json'
+    data: {
+      data: string
+    }
+  }
+  forward: {
+    type: 'forward'
+    data: {
+      id: string
+      filename?: string
+      summary?: string
+      desc?: string
+    }
+  }
+  new_dice: {
+    type: 'new_dice'
+    data: {}
+  }
+  new_rps: {
+    type: 'new_rps'
+    data: {
+      id: number
+    }
+  }
+  basketball: {
+    type: 'basketball'
+    data: {
+      id: number
+    }
+  }
+  bubble_face: {
+    type: 'bubble_face'
+    data: {
+      id: number
+      count: number
+    }
+  }
 }
 
 export interface Send {
@@ -150,6 +230,135 @@ export interface Send {
       content?: string
     }
   }
+  contact: {
+    type: 'contact'
+    data: {
+      type: 'private' | 'group'
+      id: number
+    }
+  }
+  location: {
+    type: 'location'
+    data: {
+      lat: number
+      lon: number
+    }
+  }
+  music: {
+    type: 'music'
+    data:
+      | {
+          type: 'qq' | '163'
+          id: number
+        }
+      | {
+          type: 'custom'
+          title: string
+          singer?: string
+          url: string
+          image?: string
+          audio: string
+        }
+  }
+  reply: {
+    type: 'reply'
+    data:
+      | {
+          id: number
+        }
+      | {
+          id: number
+          seq: number
+          text: string
+          time: number
+          qq: number
+        }
+  }
+  touch: {
+    type: 'touch'
+    data: {
+      id: number
+    }
+  }
+  weather: {
+    type: 'weather'
+    data:
+      | {
+          code: number
+        }
+      | {
+          city: string
+        }
+  }
+  json: {
+    type: 'json'
+    data: {
+      data: string
+    }
+  }
+  forward: {
+    type: 'forward'
+    data: {
+      id: string
+      filename?: string
+      summary?: string
+      desc?: string
+    }
+  }
+  new_dice: {
+    type: 'new_dice'
+    data: {}
+  }
+  new_rps: {
+    type: 'new_rps'
+    data: {}
+  }
+  basketball: {
+    type: 'basketball'
+    data: {}
+  }
+  bubble_face: {
+    type: 'bubble_face'
+    data: {
+      id: number
+      count: number
+      text?: string
+    }
+  }
+  // button: {
+  //   type: 'button'
+  //   data: Send['inline_keyboard']['data']
+  // }
+  // inline_keyboard: {
+  //   type: 'inline_keyboard'
+  //   data: {
+  //     data: {
+  //       rows: {
+  //         buttons: {
+  //           id?: string
+  //           render_data: {
+  //             label: string
+  //             visited_label: string
+  //             style: number
+  //           }
+  //           action: {
+  //             type: number
+  //             click_limit: number
+  //             unsupport_tips: string
+  //             data: string
+  //             at_bot_show_channel_list?: boolean
+  //             permission: {
+  //               type: number
+  //               specify_role_ids?: string[]
+  //               specify_user_ids?: string[]
+  //             }
+  //           }
+  //         }[]
+  //       }[]
+  //       bot_app_id: number
+  //     }
+  //   }
+  // }
 }
 
 export function Text(data: Send['text']['data']): Send['text'] {
@@ -196,195 +405,58 @@ export function Share(data: Send['share']['data']): Send['share'] {
   return { type: 'share', data }
 }
 
-export interface Contact {
-  type: 'contact'
-  data: {
-    type: 'private' | 'group'
-    id: number
-  }
-}
-
-export function Contact(data: Contact['data']): Contact {
+export function Contact(data: Send['contact']['data']): Send['contact'] {
   return { type: 'contact', data }
 }
 
-export interface Location {
-  type: 'location'
-  data: {
-    lat: number
-    lon: number
-  }
-}
-
-export function Location(data: Location['data']): Location {
+export function Location(data: Send['location']['data']): Send['location'] {
   return { type: 'location', data }
 }
 
-export interface Music {
-  type: 'music'
-  data:
-    | {
-        type: 'qq' | '163'
-        id: number
-      }
-    | {
-        type: 'custom'
-        title: string
-        singer?: string
-        url: string
-        image?: string
-        audio: string
-      }
-}
-
-export function Music(data: Music['data']): Music {
+export function Music(data: Send['music']['data']): Send['music'] {
   return { type: 'music', data }
 }
 
-export interface Reply {
-  type: 'reply'
-  data:
-    | {
-        id: number
-      }
-    | {
-        id: number
-        seq: number
-        text: string
-        time: number
-        qq: number
-      }
-}
-
-export function Reply(data: Reply['data']): Reply {
+export function Reply(data: Send['reply']['data']): Send['reply'] {
   return { type: 'reply', data }
 }
 
-export interface Touch {
-  type: 'touch'
-  data: {
-    id: number
-  }
-}
-
-export function Touch(data: Touch['data']): Touch {
+export function Touch(data: Send['touch']['data']): Send['touch'] {
   return { type: 'touch', data }
 }
 
-export interface Weather {
-  type: 'weather'
-  data:
-    | {
-        code: number
-      }
-    | {
-        city: string
-      }
-}
-
-export function Weather(data: Weather['data']): Weather {
+export function Weather(data: Send['weather']['data']): Send['weather'] {
   return { type: 'weather', data }
 }
 
-export interface Json {
-  type: 'json'
-  data: string
-}
-
-export function Json(data: Json['data']): Json {
+export function Json(data: Send['json']['data']): Send['json'] {
   return { type: 'json', data }
 }
 
-export interface Forward {
-  type: 'forward'
-  data: {
-    id: number
-    filename?: string
-    summary?: string
-    desc?: string
-  }
-}
-
-export function Forward(data: Forward['data']): Forward {
+export function Forward(data: Send['forward']['data']): Send['forward'] {
   return { type: 'forward', data }
 }
 
-export interface NewDice {
-  type: 'new_dice'
-  data: {}
-}
-
-export function NewDice(): NewDice {
+export function NewDice(): Send['new_dice'] {
   return { type: 'new_dice', data: {} }
 }
 
-export interface NewRps {
-  type: 'new_rps'
-  data: {}
-}
-
-export function NewRps(): NewRps {
+export function NewRps(): Send['new_rps'] {
   return { type: 'new_rps', data: {} }
 }
 
-export interface Basketball {
-  type: 'basketball'
-  data: {}
-}
-
-export function Basketball(): Basketball {
+export function Basketball(): Send['basketball'] {
   return { type: 'basketball', data: {} }
 }
 
-export interface BubbleFace {
-  type: 'bubble_face'
-  data: {
-    id: number
-    count: number
-    text?: string
-  }
-}
-
-export function BubbleFace(data: BubbleFace['data']): BubbleFace {
+export function BubbleFace(data: Send['bubble_face']['data']): Send['bubble_face'] {
   return { type: 'bubble_face', data }
 }
 
-export interface Button {
-  type: 'button'
-  data: InlineKeyboard['data']
-}
+// export function Button(data: Send['button']['data']): Send['button'] {
+//   return { type: 'button', data }
+// }
 
-export interface InlineKeyboard {
-  type: 'inline_keyboard'
-  data: {
-    data: {
-      rows: {
-        buttons: {
-          id?: string
-          render_data: {
-            label: string
-            visited_label: string
-            style: number
-          }
-          action: {
-            type: number
-            click_limit: number
-            unsupport_tips: string
-            data: string
-            at_bot_show_channel_list?: boolean
-            permission: {
-              type: number
-              specify_role_ids: string[]
-              specify_user_ids: string[]
-            }
-          }
-        }[]
-      }[]
-      bot_app_id: number
-    }
-  }
-}
-
-export function InlineKeyboard(data: InlineKeyboard['data']): InlineKeyboard {
-  return { type: 'inline_keyboard', data }
-}
+// export function InlineKeyboard(data: Send['inline_keyboard']['data']): Send['inline_keyboard'] {
+//   return { type: 'inline_keyboard', data }
+// }

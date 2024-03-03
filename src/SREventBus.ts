@@ -66,7 +66,7 @@ export class SREventBus extends EventEmitter implements EventEmitter {
     const messageType = json['message_type']
     switch (messageType) {
       case 'private':
-        return this.emit('message.private', json.data)
+        return this.emit('message.private', json)
       case 'group':
         return this.emit('message.group', json)
       case 'guild':
