@@ -1,4 +1,5 @@
 import { ClientOptions } from 'ws'
+import { Receive, Send } from './Structs.ts'
 
 export interface SRWebsocketOptionsBaseUrl {
   baseUrl: string
@@ -100,7 +101,7 @@ export interface PrivateMessage {
   // 发送者 QQ 号
   user_id: number
   // 消息内容
-  message: MessageArray
+  message: ReceiveMessageArray
   // CQ 码格式消息
   raw_message: string
   // 字体
@@ -139,7 +140,7 @@ export interface GroupMessage {
   // 发送者 QQ 号
   user_id: number
   // 消息内容
-  message: MessageArray
+  message: ReceiveMessageArray
   // CQ 码格式消息
   raw_message: string
   // 字体
@@ -166,7 +167,7 @@ export interface GuildMessage {
   // 目标 QQ
   peer_id: number
   user_id: bigint
-  message: MessageArray
+  message: ReceiveMessageArray
   raw_message: string
   font: 0
   sender: {
@@ -475,12 +476,11 @@ export interface Refresh {
   no_cache?: boolean
 }
 
-export interface MessageObject {
-  type: string
-  data: { [key: string]: any }
-}
+export type ReceiveMessageObject = Receive[keyof Receive]
+export type ReceiveMessageArray = ReceiveMessageObject[]
 
-export type MessageArray = MessageObject[]
+export type SendMessageObject = Send[keyof Send]
+export type SendMessageArray = SendMessageObject[]
 
 export type WSSendParam = {
   set_group_ban: { group_id: number; user_id: number; duration?: number }
@@ -606,7 +606,7 @@ export type WSSendParam = {
     self_id: number
     context: SocketHandle['message']
     operation?: {
-      reply?: string | MessageObject | MessageArray
+      reply?: string | SendMessageObject | SendMessageArray
       auto_escape?: boolean
       at_sender?: boolean
       auto_reply?: boolean
@@ -637,7 +637,7 @@ export type WSSendParam = {
           data:
             | { id: number }
             | {
-                content: string | MessageObject | MessageArray
+                content: string | SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -655,7 +655,7 @@ export type WSSendParam = {
           data:
             | { id: number }[]
             | {
-                content: string | MessageObject | MessageArray
+                content: string | SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -671,7 +671,7 @@ export type WSSendParam = {
       data:
         | { id: number }[]
         | {
-            content: string | MessageObject | MessageArray
+            content: string | SendMessageObject | SendMessageArray
             uin?: number
             uid?: string
             name?: string
@@ -685,7 +685,7 @@ export type WSSendParam = {
         group_id: number
         retry_cnt?: number
         recall_duration?: number
-        message: MessageObject | MessageArray
+        message: SendMessageObject | SendMessageArray
       }
     | {
         group_id: number
@@ -702,7 +702,7 @@ export type WSSendParam = {
         channel_id: string
         retry_cnt?: number
         recall_duration?: number
-        message: string | MessageObject | MessageArray
+        message: string | SendMessageObject | SendMessageArray
       }
     | {
         guild_id: string
@@ -722,7 +722,7 @@ export type WSSendParam = {
         retry_cnt?: number
         recall_duration?: number
         group_id: number
-        message: MessageObject | MessageArray
+        message: SendMessageObject | SendMessageArray
       }
     | {
         message_type: 'group'
@@ -737,7 +737,7 @@ export type WSSendParam = {
         retry_cnt?: number
         recall_duration?: number
         user_id: number
-        message: MessageObject | MessageArray
+        message: SendMessageObject | SendMessageArray
       }
     | {
         message_type: 'private'
@@ -773,7 +773,7 @@ export type WSSendParam = {
         group_id?: number
         retry_cnt?: number
         recall_duration?: number
-        message: MessageObject | MessageArray
+        message: SendMessageObject | SendMessageArray
       }
     | {
         user_id: number | 'self'
@@ -944,7 +944,7 @@ export type WSSendReturn = {
     message_id: number
     message_seq: number
     real_id: number
-    message_content: MessageArray
+    message_content: ReceiveMessageArray
   }[]
   get_forward_message: {
     messages: {
@@ -962,7 +962,7 @@ export type WSSendReturn = {
         uid: string
         tiny_id: string
       }
-      message: MessageArray
+      message: ReceiveMessageArray
       group_id: number
       peer_id: number
     }[]
@@ -1020,7 +1020,7 @@ export type WSSendReturn = {
         uid: string
         tiny_id: string
       }
-      message: MessageArray
+      message: ReceiveMessageArray
       group_id: number
       peer_id: number
     }[]
@@ -1103,7 +1103,7 @@ export type WSSendReturn = {
         uid: string
         tiny_id: string
       }
-      message: MessageArray
+      message: ReceiveMessageArray
       peer_id: number
     })[]
   }
@@ -1135,7 +1135,7 @@ export type WSSendReturn = {
       uid: string
       tiny_id: string
     }
-    message: MessageArray
+    message: ReceiveMessageArray
     group_id: number
     peer_id: number
   }
