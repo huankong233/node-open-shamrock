@@ -1326,7 +1326,7 @@ export type WSSendReturn = {
   }
   get_weather: {
     posterStore: {
-      weatherInfo: Weather
+      weatherInfo: WeatherResponse
       qrcode: string
       poster: string
       swiperIndex: number
@@ -1343,7 +1343,7 @@ export type WSSendReturn = {
       ]
       weekBegin: number
       weekEnd: number
-      weather: Weather
+      weather: WeatherResponse
     }
   }
   get_weather_city_code: { adcode: number; province: string; city: string }[]
@@ -1463,7 +1463,7 @@ export interface FileAndFolder {
   }[]
 }
 
-export interface Weather {
+export interface WeatherResponse {
   all_astro: []
   lifeindex_forecast_list: []
   weekly_astro: {

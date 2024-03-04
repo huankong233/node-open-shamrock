@@ -16,7 +16,10 @@
     "OpenShamrock"
   ],
   "author": "huan_kong",
-  "repository": "https://github.com/huankong233/node-open-shamrock",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huankong233/node-open-shamrock.git"
+  },
   "bugs": {
     "url": "https://github.com/huankong233/node-open-shamrock/issues"
   },
