@@ -1,8 +1,8 @@
-import type { SocketHandle, Status } from './Interfaces.ts'
-import type { SRWebsocket } from './SRWebsocket.ts'
+import type { SocketHandle, Status } from './Interfaces.js'
+import type { SRWebsocket } from './SRWebsocket.js'
 
 import { EventEmitter } from 'events'
-import { logger } from './Utils.ts'
+import { logger } from './Utils.js'
 
 export class SREventBus extends EventEmitter implements EventEmitter {
   _events: { [key in keyof SocketHandle]?: Function[] | Function }

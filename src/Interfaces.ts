@@ -1,5 +1,5 @@
 import { ClientOptions } from 'ws'
-import { Receive, Send } from './Structs.ts'
+import { Receive, Send } from './Structs.js'
 
 export interface SRWebsocketOptionsBaseUrl {
   baseUrl: string

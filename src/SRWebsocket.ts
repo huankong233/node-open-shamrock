@@ -8,12 +8,12 @@ import type {
   SocketHandle,
   WSSendParam,
   WSSendReturn
-} from './Interfaces.ts'
+} from './Interfaces.js'
 
 import WebSocket, { Data } from 'ws'
 import { randomUUID } from 'crypto'
-import { SREventBus } from './SREventBus.ts'
-import { JSONParse, JSONStringify, logger } from './Utils.ts'
+import { SREventBus } from './SREventBus.js'
+import { JSONParse, JSONStringify, logger } from './Utils.js'
 
 export class SRWebsocket {
   debug: boolean
