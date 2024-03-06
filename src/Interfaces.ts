@@ -19,7 +19,15 @@ export type SRWebsocketOptions = SRWebsocketOptionsBaseUrl | SRWebsocketOptionsH
 
 export interface WSCloseRes {
   code: number
-  reason: Buffer
+  reason: string
+}
+
+export interface WSErrorRes {
+  errno: number
+  code: string
+  syscall: string
+  address: string
+  port: number
 }
 
 export interface APIRequest<T> {
@@ -408,9 +416,9 @@ export type SocketHandle = {
   'socket.apiOpen': void
   'socket.eventClose': WSCloseRes
   'socket.apiClose': WSCloseRes
-  'socket.eventError': Error
-  'socket.apiError': Error
-  socket: void | WSCloseRes | Error
+  'socket.eventError': WSErrorRes
+  'socket.apiError': WSErrorRes
+  socket: void | WSCloseRes | WSErrorRes
 
   'api.preSend': APIRequest<any>
   'api.response': APISuccessResponse<any> | APIErrorResponse<any>
@@ -423,7 +431,8 @@ export type SocketHandle = {
   'message.private': PrivateMessage
   'message.group': GroupMessage
   'message.guild': GuildMessage
-  message: PrivateMessage | GroupMessage | GuildMessage
+  message: PrivateMessage | GroupMessage
+  // | GuildMessage
 
   'request.friend': RequestFriend
   'request.group': RequestGroup
@@ -448,7 +457,12 @@ export type SocketHandle = {
   'notice.notify.lucky_king': NotifyLuckyKing
   'notice.notify.honor': NotifyHonor
   'notice.notify.title': NotifyTitle
-  'notice.notify': NotifyPokeFriend | NotifyPokeGroup | NotifyLuckyKing | NotifyHonor | NotifyTitle
+  'notice.notify':
+    | NotifyPokeFriend
+    | NotifyPokeGroup
+    // | NotifyLuckyKing
+    // | NotifyHonor
+    | NotifyTitle
 
   notice:
     | FriendRecall
@@ -459,15 +473,15 @@ export type SocketHandle = {
     | GroupUpload
     | PrivateUpload
     | GroupBan
-    | GroupCard
-    | FriendAdd
-    | OfflineFile
+    // | GroupCard
+    // | FriendAdd
+    // | OfflineFile
     | Essence
-    | ClientStatus
+    // | ClientStatus
     | NotifyPokeFriend
     | NotifyPokeGroup
-    | NotifyLuckyKing
-    | NotifyHonor
+    // | NotifyLuckyKing
+    // | NotifyHonor
     | NotifyTitle
 }
 
@@ -606,8 +620,7 @@ export type WSSendParam = {
     self_id: number
     context: SocketHandle['message']
     operation?: {
-      reply?: string | SendMessageObject | SendMessageArray
-      auto_escape?: boolean
+      reply?: SendMessageObject | SendMessageArray
       at_sender?: boolean
       auto_reply?: boolean
       delete?: boolean
@@ -637,7 +650,7 @@ export type WSSendParam = {
           data:
             | { id: number }
             | {
-                content: string | SendMessageObject | SendMessageArray
+                content: SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -655,7 +668,7 @@ export type WSSendParam = {
           data:
             | { id: number }[]
             | {
-                content: string | SendMessageObject | SendMessageArray
+                content: SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -666,12 +679,13 @@ export type WSSendParam = {
       }
   send_group_forward_message: {
     group_id: number
+    retry_cnt?: number
     messages: {
       type: 'node'
       data:
-        | { id: number }[]
+        | { id: number }
         | {
-            content: string | SendMessageObject | SendMessageArray
+            content: SendMessageObject | SendMessageArray
             uin?: number
             uid?: string
             name?: string
@@ -680,38 +694,21 @@ export type WSSendParam = {
           }
     }[]
   }
-  send_group_message:
-    | {
-        group_id: number
-        retry_cnt?: number
-        recall_duration?: number
-        message: SendMessageObject | SendMessageArray
-      }
-    | {
-        group_id: number
-        retry_cnt?: number
-        recall_duration?: number
-        message: string
-        autoEscape?: boolean
-      }
+  send_group_message: {
+    group_id: number
+    retry_cnt?: number
+    recall_duration?: number
+    message: SendMessageObject | SendMessageArray
+  }
   send_group_announcement: { group_id: number; content: string; image?: string }
   send_group_sign: { group_id: number }
-  send_guild_message:
-    | {
-        guild_id: string
-        channel_id: string
-        retry_cnt?: number
-        recall_duration?: number
-        message: string | SendMessageObject | SendMessageArray
-      }
-    | {
-        guild_id: string
-        channel_id: string
-        retry_cnt?: number
-        recall_duration?: number
-        message: string
-        autoEscape?: boolean
-      }
+  send_guild_message: {
+    guild_id: string
+    channel_id: string
+    retry_cnt?: number
+    recall_duration?: number
+    message: SendMessageObject | SendMessageArray
+  }
   send_like: {
     times: number
     user_id: number
@@ -725,27 +722,11 @@ export type WSSendParam = {
         message: SendMessageObject | SendMessageArray
       }
     | {
-        message_type: 'group'
-        retry_cnt?: number
-        recall_duration?: number
-        group_id: number
-        auto_escape?: boolean
-        message: string
-      }
-    | {
         message_type: 'private'
         retry_cnt?: number
         recall_duration?: number
         user_id: number
         message: SendMessageObject | SendMessageArray
-      }
-    | {
-        message_type: 'private'
-        retry_cnt?: number
-        recall_duration?: number
-        user_id: number
-        auto_escape?: boolean
-        message: string
       }
   send_message_by_resid: {
     res_id: string
@@ -754,11 +735,14 @@ export type WSSendParam = {
   }
   send_private_forward_message: {
     user_id: number
+    group_id?: number
+    retry_cnt?: number
     messages: {
+      type: 'node'
       data:
-        | { id: number }[]
+        | { id: number }
         | {
-            content: string
+            content: SendMessageObject | SendMessageArray
             uin?: number
             uid?: string
             name?: string
@@ -784,8 +768,14 @@ export type WSSendParam = {
         message: string
       }
   set_essence_message: { message_id: number }
-  set_friend_add_request: { flag: string; approve?: boolean; remark?: string; notSeen?: boolean }
-  set_group_add_request: { flag: string; approve?: boolean; remark?: string; notSeen?: boolean }
+  set_friend_add_request: { flag: string; approve?: boolean; reason?: string; notSeen?: boolean }
+  set_group_add_request: {
+    flag: string
+    approve?: boolean
+    notSeen?: boolean
+    reason?: string
+    sub_type: 'add' | 'invite'
+  }
   set_group_admin: { group_id: number; user_id: number; enable: boolean }
   set_group_comment_face: {
     group_id: number

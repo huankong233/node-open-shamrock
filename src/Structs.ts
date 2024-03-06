@@ -1,3 +1,5 @@
+import { SendMessageArray, SendMessageObject } from './Interfaces.js'
+
 export interface Receive {
   text: {
     type: 'text'
@@ -108,6 +110,11 @@ export interface Receive {
       data: string
     }
   }
+  // 不支持 node
+  // node: {
+  //   type: 'node'
+  //   data: {}
+  // }
   forward: {
     type: 'forward'
     data: {
@@ -193,7 +200,7 @@ export interface Send {
   at: {
     type: 'at'
     data: {
-      qq: number | 'all' | 'admin' | 'online'
+      qq: number | string | 'all' | 'admin' | 'online'
       name?: string
     }
   }
@@ -295,6 +302,21 @@ export interface Send {
     data: {
       data: string
     }
+  }
+  node: {
+    type: 'node'
+    data:
+      | {
+          id: number
+        }
+      | {
+          content: SendMessageObject | SendMessageArray
+          uin?: number
+          uid?: string
+          name?: string
+          seq?: number
+          time?: number
+        }
   }
   forward: {
     type: 'forward'
@@ -431,6 +453,10 @@ export function Weather(data: Send['weather']['data']): Send['weather'] {
 
 export function Json(data: Send['json']['data']): Send['json'] {
   return { type: 'json', data }
+}
+
+export function Node(data: Send['node']['data']): Send['node'] {
+  return { type: 'node', data }
 }
 
 export function Forward(data: Send['forward']['data']): Send['forward'] {

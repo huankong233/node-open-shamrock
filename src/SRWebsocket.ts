@@ -18,7 +18,7 @@ import { JSONParse, JSONStringify, logger } from './Utils.js'
 export class SRWebsocket {
   debug: boolean
 
-  #eventBus: SREventBus
+  eventBus: SREventBus
   SRWebsocketOptions: SRWebsocketOptionsBaseUrl
   eventSocket?: WebSocket
   apiSocket?: WebSocket
@@ -59,7 +59,7 @@ export class SRWebsocket {
       }
     }
 
-    this.#eventBus = new SREventBus(this)
+    this.eventBus = new SREventBus(this)
     this.echoMap = new Map()
     this.debug = debug
   }
@@ -82,40 +82,46 @@ export class SRWebsocket {
   connectEvent() {
     const url = `${this.SRWebsocketOptions.baseUrl}/?access_token=${this.SRWebsocketOptions.accessToken}`
     this.eventSocket = new WebSocket(url, this.SRWebsocketOptions.ClientOptions)
-    this.#eventBus.emit('socket.eventConnecting', undefined)
+    this.eventBus.emit('socket.eventConnecting', undefined)
     this.eventSocket
       .on('open', () => {
-        this.#eventBus.emit('socket.eventOpen', undefined)
+        this.eventBus.emit('socket.eventOpen', undefined)
       })
       .on('close', (code, reason) => {
-        this.#eventBus.emit('socket.eventClose', { code, reason })
+        this.eventBus.emit('socket.eventClose', {
+          code,
+          reason: Buffer.isBuffer(reason) ? reason.toString() : reason
+        })
         this.eventSocket = undefined
       })
       .on('message', data => {
         this.#eventMessage(data)
       })
-      .on('error', data => {
-        this.#eventBus.emit('socket.eventError', data)
+      .on('error', (data: any) => {
+        this.eventBus.emit('socket.eventError', data)
       })
   }
 
   connectApi() {
     const url = `${this.SRWebsocketOptions.baseUrl}/api?access_token=${this.SRWebsocketOptions.accessToken}`
     this.apiSocket = new WebSocket(url, this.SRWebsocketOptions.ClientOptions)
-    this.#eventBus.emit('socket.apiConnecting', undefined)
+    this.eventBus.emit('socket.apiConnecting', undefined)
     this.apiSocket
       .on('open', () => {
-        this.#eventBus.emit('socket.apiOpen', undefined)
+        this.eventBus.emit('socket.apiOpen', undefined)
       })
       .on('close', (code, reason) => {
-        this.#eventBus.emit('socket.apiClose', { code, reason })
+        this.eventBus.emit('socket.apiClose', {
+          code,
+          reason: Buffer.isBuffer(reason) ? reason.toString() : reason
+        })
         this.apiSocket = undefined
       })
       .on('message', data => {
         this.#apiMessage(data)
       })
-      .on('error', data => {
-        this.#eventBus.emit('socket.apiError', data)
+      .on('error', (data: any) => {
+        this.eventBus.emit('socket.apiError', data)
       })
   }
 
@@ -136,7 +142,7 @@ export class SRWebsocket {
       logger.dir(json)
     }
 
-    this.#eventBus.parseMessage(json)
+    this.eventBus.parseMessage(json)
   }
 
   #apiMessage(data: Data) {
@@ -168,7 +174,7 @@ export class SRWebsocket {
       handler.onFailure(json)
     }
 
-    this.#eventBus.emit('api.response', json)
+    this.eventBus.emit('api.response', json)
   }
 
   disconnectEvent() {
@@ -224,7 +230,7 @@ export class SRWebsocket {
         onFailure
       })
 
-      this.#eventBus.emit('api.preSend', message)
+      this.eventBus.emit('api.preSend', message)
 
       if (this.apiSocket === undefined) {
         reject({
@@ -255,7 +261,7 @@ export class SRWebsocket {
    * @return 用于当作参数调用 [off]{@link off} 解除监听
    */
   on<T extends keyof SocketHandle>(event: T, handle: EventHandle<T>): this {
-    this.#eventBus.on(event, handle)
+    this.eventBus.on(event, handle)
     return this
   }
 
@@ -266,7 +272,7 @@ export class SRWebsocket {
    * @return 用于当作参数调用 [off]{@link off} 解除监听
    */
   once<T extends keyof SocketHandle>(event: T, handle: EventHandle<T>): this {
-    this.#eventBus.once(event, handle)
+    this.eventBus.once(event, handle)
     return this
   }
 
@@ -276,7 +282,7 @@ export class SRWebsocket {
    * @param handle
    */
   off<T extends keyof SocketHandle>(event: T, handle: EventHandle<T>): this {
-    this.#eventBus.off(event, handle)
+    this.eventBus.off(event, handle)
     return this
   }
 
@@ -286,7 +292,7 @@ export class SRWebsocket {
    * @param context
    */
   emit<T extends keyof SocketHandle>(type: T, context: SocketHandle[T]): this {
-    this.#eventBus.emit(type, context)
+    this.eventBus.emit(type, context)
     return this
   }
 
@@ -378,8 +384,8 @@ export class SRWebsocket {
     return this.send('get_forward_message', params)
   }
 
-  get_friend_list(params: WSSendParam['get_friend_list']) {
-    return this.send('get_friend_list', params)
+  get_friend_list(params?: WSSendParam['get_friend_list']) {
+    return this.send('get_friend_list', params ?? {})
   }
 
   get_friend_system_message() {
@@ -626,7 +632,7 @@ export class SRWebsocket {
   }
 
   handle_quick_operation_async(params: WSSendParam['.handle_quick_operation_async']) {
-    const self_id = this.#eventBus.status.self.user_id
+    const self_id = this.eventBus.status.self.user_id
     return this.send('.handle_quick_operation_async', {
       self_id: params.self_id ?? self_id,
       context: params.context,
