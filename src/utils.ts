@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import { SendMessageArray, SendMessageObject } from './Interfaces.js'
 
 export const getTime = () => new Date().toLocaleString()
 
@@ -70,4 +71,45 @@ export const JSONParse = (json: string) => {
 
     return value
   })
+}
+
+export const SPLIT = /(?=\[CQ:)|(?<=])/
+export const CQ_TAG_REGEXP = /^\[CQ:([a-z]+)(?:,([^\]]+))?]$/
+
+/**
+ * CQ码转JSON
+ */
+export function convertCQCodeToJSON(msg: string) {
+  return msg.split(SPLIT).map(tagStr => {
+    const match = CQ_TAG_REGEXP.exec(tagStr)
+    if (match === null) return { type: 'text', data: { text: tagStr } }
+
+    const [, tagName, value] = match
+    if (value === undefined) return { type: tagName, data: {} }
+
+    const data = Object.fromEntries(
+      value.split(',').map(v => {
+        const index = v.indexOf('=')
+        return [v.slice(0, index), v.slice(index + 1)]
+      })
+    )
+
+    return { type: tagName, data }
+  })
+}
+
+/**
+ * JSON转CQ码
+ */
+export function convertJSONToCQCode(json: SendMessageObject | SendMessageArray): string {
+  const conver = (json: SendMessageObject) =>
+    `[CQ:${json.type}${Object.entries(json.data)
+      .map(([k, v]) => (v ? `,${k}=${v}` : ''))
+      .join('')}]`
+
+  if (Array.isArray(json)) {
+    return json.map(item => conver(item)).join('')
+  } else {
+    return conver(json)
+  }
 }

@@ -109,7 +109,7 @@ export interface PrivateMessage {
   // 发送者 QQ 号
   user_id: number
   // 消息内容
-  message: ReceiveMessageArray
+  message: ReceiveMessageArray | string
   // CQ 码格式消息
   raw_message: string
   // 字体
@@ -148,7 +148,7 @@ export interface GroupMessage {
   // 发送者 QQ 号
   user_id: number
   // 消息内容
-  message: ReceiveMessageArray
+  message: ReceiveMessageArray | string
   // CQ 码格式消息
   raw_message: string
   // 字体
@@ -175,7 +175,7 @@ export interface GuildMessage {
   // 目标 QQ
   peer_id: number
   user_id: bigint
-  message: ReceiveMessageArray
+  message: ReceiveMessageArray | string
   raw_message: string
   font: 0
   sender: {
