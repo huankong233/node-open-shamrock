@@ -651,10 +651,12 @@ export class SRWebsocket {
     return this.send('set_group_remark', params)
   }
 
-  handle_quick_operation_async(params: WSSendParam['.handle_quick_operation_async']) {
-    const self_id = this.eventBus.status.self.user_id
+  handle_quick_operation_async(params: {
+    context: SocketHandle['message']
+    operation: WSSendParam['.handle_quick_operation_async']['operation']
+  }) {
     return this.send('.handle_quick_operation_async', {
-      self_id: params.self_id ?? self_id,
+      self_id: this.eventBus.status.self.user_id,
       context: params.context,
       operation: params.operation
     })

@@ -1,5 +1,10 @@
 import { randomUUID } from 'crypto'
-import { SendMessageArray, SendMessageObject } from './Interfaces.js'
+import {
+  ReceiveMessageArray,
+  ReceiveMessageObject,
+  SendMessageArray,
+  SendMessageObject
+} from './Interfaces.js'
 
 export const getTime = () => new Date().toLocaleString()
 
@@ -101,8 +106,10 @@ export function convertCQCodeToJSON(msg: string) {
 /**
  * JSON转CQ码
  */
-export function convertJSONToCQCode(json: SendMessageObject | SendMessageArray): string {
-  const conver = (json: SendMessageObject) =>
+export function convertJSONToCQCode(
+  json: SendMessageObject | SendMessageArray | ReceiveMessageObject | ReceiveMessageArray
+): string {
+  const conver = (json: SendMessageObject | ReceiveMessageObject) =>
     `[CQ:${json.type}${Object.entries(json.data)
       .map(([k, v]) => (v ? `,${k}=${v}` : ''))
       .join('')}]`

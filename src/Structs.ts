@@ -16,14 +16,9 @@ export interface Receive {
   }
   image: {
     type: 'image'
-    data: (
-      | {
-          file: string
-        }
-      | {
-          url: string
-        }
-    ) & {
+    data: {
+      file: string
+      url: string
       type: 'original' | 'flash' | 'show'
       subType: number
     }
@@ -310,7 +305,7 @@ export interface Send {
           id: number
         }
       | {
-          content: SendMessageObject | SendMessageArray
+          content: string | SendMessageObject | SendMessageArray
           uin?: number
           uid?: string
           name?: string

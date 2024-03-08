@@ -1615,7 +1615,7 @@ export interface GroupMemberInfo {
   unique_name: string
   area: string
   level: number
-  role: 'owner ' | 'admin' | 'member'
+  role: 'owner' | 'admin' | 'member'
   unfriendly: boolean
   card_changeable: boolean
   shut_up_timestamp: number
