@@ -4,35 +4,46 @@ import type {
   EventHandle,
   ResponseHandler,
   SRWebsocketOptions,
-  SRWebsocketOptionsBaseUrl,
   SocketHandle,
   WSSendParam,
   WSSendReturn
 } from './Interfaces.js'
 
-import WebSocket, { Data } from 'ws'
+import WebSocket, { ClientOptions, Data } from 'ws'
 import { randomUUID } from 'crypto'
 import { SREventBus } from './SREventBus.js'
-import { JSONParse, JSONStringify, logger } from './Utils.js'
+import {
+  JSONParse,
+  JSONStringify,
+  convertCQCodeToJSON,
+  convertJSONToCQCode,
+  logger
+} from './Utils.js'
 
 export class SRWebsocket {
   debug: boolean
 
   eventBus: SREventBus
-  SRWebsocketOptions: SRWebsocketOptionsBaseUrl
+  SRWebsocketOptions: {
+    baseUrl: string
+    accessToken: string
+    ClientOptions: ClientOptions
+    receive: 'CQCode' | 'JSON'
+  }
   eventSocket?: WebSocket
   apiSocket?: WebSocket
   echoMap: Map<string, ResponseHandler>
 
   constructor(SRWebsocketOptions: SRWebsocketOptions, debug = false) {
-    const { accessToken, ClientOptions = {} } = SRWebsocketOptions
+    const { accessToken = '', ClientOptions = {}, receive = 'CQCode' } = SRWebsocketOptions
 
     if ('baseUrl' in SRWebsocketOptions) {
       const { baseUrl } = SRWebsocketOptions
       this.SRWebsocketOptions = {
         baseUrl,
         accessToken,
-        ClientOptions
+        ClientOptions,
+        receive
       }
     } else if (
       'protocol' in SRWebsocketOptions &&
@@ -43,7 +54,8 @@ export class SRWebsocket {
       this.SRWebsocketOptions = {
         baseUrl: protocol + '://' + host + ':' + port,
         accessToken,
-        ClientOptions
+        ClientOptions,
+        receive
       }
     } else {
       throw new Error(
@@ -51,7 +63,7 @@ export class SRWebsocket {
       )
     }
 
-    // 兼容 OpenShamrock
+    // 填入OpenShamrock访问密钥
     if (accessToken) {
       this.SRWebsocketOptions.ClientOptions = {
         ...ClientOptions,
@@ -135,6 +147,14 @@ export class SRWebsocket {
     } catch (error) {
       logger.dir(error)
       return logger.warn('[node-open-shamrock] failed to parse JSON')
+    }
+
+    if (this.SRWebsocketOptions.receive === 'CQCode' && typeof json.message === 'object') {
+      json.message = convertJSONToCQCode(json.message)
+    }
+
+    if (this.SRWebsocketOptions.receive === 'JSON' && typeof json.message === 'string') {
+      json.message = convertCQCodeToJSON(json.message)
     }
 
     if (this.debug) {

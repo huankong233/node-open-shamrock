@@ -3,19 +3,19 @@ import { Receive, Send } from './Structs.js'
 
 export interface SRWebsocketOptionsBaseUrl {
   baseUrl: string
-  accessToken?: string
-  ClientOptions?: ClientOptions
 }
 
 export interface SRWebsocketOptionsHost {
   protocol: 'ws' | 'wss'
   host: string
   port: number
-  accessToken?: string
-  ClientOptions?: ClientOptions
 }
 
-export type SRWebsocketOptions = SRWebsocketOptionsBaseUrl | SRWebsocketOptionsHost
+export type SRWebsocketOptions = (SRWebsocketOptionsBaseUrl | SRWebsocketOptionsHost) & {
+  accessToken?: string
+  ClientOptions?: ClientOptions
+  receive?: 'CQCode' | 'JSON'
+}
 
 export interface WSCloseRes {
   code: number
@@ -434,6 +434,9 @@ export type SocketHandle = {
   message: PrivateMessage | GroupMessage
   // | GuildMessage
 
+  message_sent: PrivateMessage | GroupMessage
+  // | GuildMessage
+
   'request.friend': RequestFriend
   'request.group': RequestGroup
   request: RequestGroup | RequestFriend
@@ -619,8 +622,15 @@ export type WSSendParam = {
   '.handle_quick_operation_async': {
     self_id: number
     context: SocketHandle['message']
-    operation?: {
-      reply?: SendMessageObject | SendMessageArray
+    operation?: (
+      | {
+          reply?: SendMessageObject | SendMessageArray
+        }
+      | {
+          reply?: string
+          auto_escape?: boolean
+        }
+    ) & {
       at_sender?: boolean
       auto_reply?: boolean
       delete?: boolean
@@ -650,7 +660,7 @@ export type WSSendParam = {
           data:
             | { id: number }
             | {
-                content: SendMessageObject | SendMessageArray
+                content: string | SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -668,7 +678,7 @@ export type WSSendParam = {
           data:
             | { id: number }[]
             | {
-                content: SendMessageObject | SendMessageArray
+                content: string | SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -685,7 +695,7 @@ export type WSSendParam = {
       data:
         | { id: number }
         | {
-            content: SendMessageObject | SendMessageArray
+            content: string | SendMessageObject | SendMessageArray
             uin?: number
             uid?: string
             name?: string
@@ -694,40 +704,62 @@ export type WSSendParam = {
           }
     }[]
   }
-  send_group_message: {
+  send_group_message: (
+    | {
+        message: SendMessageObject | SendMessageArray
+      }
+    | {
+        message: string
+        auto_escape?: boolean
+      }
+  ) & {
     group_id: number
     retry_cnt?: number
     recall_duration?: number
-    message: SendMessageObject | SendMessageArray
   }
   send_group_announcement: { group_id: number; content: string; image?: string }
   send_group_sign: { group_id: number }
-  send_guild_message: {
+  send_guild_message: (
+    | {
+        message: SendMessageObject | SendMessageArray
+      }
+    | {
+        message: string
+        auto_escape?: boolean
+      }
+  ) & {
     guild_id: string
     channel_id: string
     retry_cnt?: number
     recall_duration?: number
-    message: SendMessageObject | SendMessageArray
   }
   send_like: {
     times: number
     user_id: number
   }
-  send_message:
+  send_message: (
     | {
-        message_type: 'group'
-        retry_cnt?: number
-        recall_duration?: number
-        group_id: number
         message: SendMessageObject | SendMessageArray
       }
     | {
-        message_type: 'private'
-        retry_cnt?: number
-        recall_duration?: number
-        user_id: number
-        message: SendMessageObject | SendMessageArray
+        message: string
+        auto_escape?: boolean
       }
+  ) &
+    (
+      | {
+          message_type: 'group'
+          retry_cnt?: number
+          recall_duration?: number
+          group_id: number
+        }
+      | {
+          message_type: 'private'
+          retry_cnt?: number
+          recall_duration?: number
+          user_id: number
+        }
+    )
   send_message_by_resid: {
     res_id: string
     peer_id: number
@@ -742,7 +774,7 @@ export type WSSendParam = {
       data:
         | { id: number }
         | {
-            content: SendMessageObject | SendMessageArray
+            content: string | SendMessageObject | SendMessageArray
             uin?: number
             uid?: string
             name?: string
@@ -764,7 +796,7 @@ export type WSSendParam = {
         group_id?: number
         retry_cnt?: number
         recall_duration?: number
-        auto_escape: boolean
+        auto_escape?: boolean
         message: string
       }
   set_essence_message: { message_id: number }
@@ -841,7 +873,7 @@ export type WSSendParam = {
           data:
             | { id: number }
             | {
-                content: string
+                content: string | SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string
@@ -858,7 +890,7 @@ export type WSSendParam = {
           data:
             | { id: number }[]
             | {
-                content: string
+                content: string | SendMessageObject | SendMessageArray
                 uin?: number
                 uid?: string
                 name?: string

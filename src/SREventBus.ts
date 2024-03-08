@@ -167,5 +167,7 @@ export class SREventBus extends EventEmitter implements EventEmitter {
     }
   }
 
-  message_sent(json: any) {}
+  message_sent(json: any) {
+    return this.emit('message_sent', json)
+  }
 }
