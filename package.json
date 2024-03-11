@@ -1,6 +1,6 @@
 {
   "name": "node-open-shamrock",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "OpenShamrock SDK for Node",
   "license": "MIT",
   "type": "module",

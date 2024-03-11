@@ -45,9 +45,8 @@ export const JSONParse = (json: string) => {
   let serializedData = json.replace(numbersBiggerThanMaxInt, '"$1n"')
 
   if (json.includes('CQ:json')) {
-    const foundJSON: { [key: string]: string } = {}
-
     // 寻找 JSON 中的 JSON
+    const foundJSON: { [key: string]: string } = {}
     let start = serializedData.indexOf('"{')
     let end = serializedData.indexOf('}"')
     while (start !== -1 && end !== -1) {
@@ -59,12 +58,33 @@ export const JSONParse = (json: string) => {
       end = serializedData.indexOf('}"')
     }
 
-    return JSON.parse(serializedData, (_, value) => {
-      const isCustomFormatBigInt = typeof value === 'string' && value.match(/^\d+n$/)
-      if (isCustomFormatBigInt) return BigInt(value.substring(0, value.length - 1))
+    // 寻找 JSON 中的 JSON
+    const foundJSON2: { [key: string]: string } = {}
+    let start2 = serializedData.indexOf('={')
+    let end2 = serializedData.indexOf('}]')
+    while (start2 !== -1 && end2 !== -1) {
+      const uuid = randomUUID({ disableEntropyCache: true })
+      const data = serializedData.substring(start2 + 1, end2 + 1)
+      serializedData = serializedData.replace(data, `${uuid}`)
+      foundJSON2[uuid] = data.replace(/\\"/g, '"')
+      start2 = serializedData.indexOf('={')
+      end2 = serializedData.indexOf('}]')
+    }
 
-      const isCustomFormatJSON = typeof value === 'string' && foundJSON[value]
-      if (isCustomFormatJSON) return foundJSON[value]
+    return JSON.parse(serializedData, (_, value) => {
+      if (typeof value === 'string') {
+        if (value.match(/^\d+n$/)) {
+          return BigInt(value.substring(0, value.length - 1))
+        }
+
+        if (foundJSON[value]) {
+          return foundJSON[value]
+        }
+
+        let uuid: boolean | string = false
+        Object.keys(foundJSON2).forEach(key => (value.match(key) ? (uuid = key) : null))
+        if (uuid) return `[CQ:json,data=${foundJSON2[uuid]}]`
+      }
 
       return value
     })
