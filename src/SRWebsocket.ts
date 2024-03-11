@@ -216,10 +216,7 @@ export class SRWebsocket {
    * @param method API 端点
    * @param params 请求参数
    */
-  send<T extends keyof WSSendParam>(
-    method: T,
-    params: WSSendParam[T]
-  ): Promise<APISuccessResponse<WSSendReturn[T]>> {
+  send<T extends keyof WSSendParam>(method: T, params: WSSendParam[T]): Promise<WSSendReturn[T]> {
     const echo = randomUUID({ disableEntropyCache: true })
 
     const message: APIRequest<WSSendParam[T]> = {
