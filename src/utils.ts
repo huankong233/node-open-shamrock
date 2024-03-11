@@ -80,12 +80,25 @@ export const JSONParse = (json: string) => {
 
 export const SPLIT = /(?=\[CQ:)|(?<=])/
 export const CQ_TAG_REGEXP = /^\[CQ:([a-z]+)(?:,([^\]]+))?]$/
+export const CQ_TAG_JSON_REGEXP = /^\[CQ:json,data=(\{.*\})\]$/
 
 /**
  * CQ码转JSON
  */
 export function convertCQCodeToJSON(msg: string) {
-  return msg.split(SPLIT).map(tagStr => {
+  let msgArr: string[] = []
+  msg.split(SPLIT).forEach(value => {
+    if (value.at(0) !== '[' && value.at(value.length - 1) === ']' && msgArr.length > 0) {
+      msgArr[msgArr.length - 1] += value
+    } else {
+      msgArr.push(value)
+    }
+  })
+
+  return msgArr.map(tagStr => {
+    const json = CQ_TAG_JSON_REGEXP.exec(tagStr)
+    if (json !== null) return { type: 'json', data: { data: json[1] } }
+
     const match = CQ_TAG_REGEXP.exec(tagStr)
     if (match === null) return { type: 'text', data: { text: tagStr } }
 
@@ -119,4 +132,12 @@ export function convertJSONToCQCode(
   } else {
     return conver(json)
   }
+}
+
+export function CQCodeUnescape(str: string): string {
+  return str
+    .replace(/&#44;/g, ',')
+    .replace(/&#91;/g, '[')
+    .replace(/&#93;/g, ']')
+    .replace(/&amp;/g, '&')
 }

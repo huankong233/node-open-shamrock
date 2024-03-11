@@ -13,6 +13,7 @@ import WebSocket, { ClientOptions, Data } from 'ws'
 import { randomUUID } from 'crypto'
 import { SREventBus } from './SREventBus.js'
 import {
+  CQCodeUnescape,
   JSONParse,
   JSONStringify,
   convertCQCodeToJSON,
@@ -143,7 +144,7 @@ export class SRWebsocket {
 
     let json
     try {
-      json = JSONParse(data)
+      json = JSONParse(CQCodeUnescape(data))
     } catch (error) {
       logger.dir(error)
       return logger.warn('[node-open-shamrock] failed to parse JSON')
@@ -171,7 +172,7 @@ export class SRWebsocket {
 
     let json
     try {
-      json = JSONParse(data)
+      json = JSONParse(CQCodeUnescape(data))
     } catch (error) {
       logger.dir(error)
       return logger.warn('[node-open-shamrock] failed to parse JSON')
