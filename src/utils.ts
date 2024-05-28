@@ -82,7 +82,7 @@ export const JSONParse = (json: string) => {
         }
 
         let uuid: boolean | string = false
-        Object.keys(foundJSON2).forEach(key => (value.match(key) ? (uuid = key) : null))
+        Object.keys(foundJSON2).forEach((key) => (value.match(key) ? (uuid = key) : null))
         if (uuid) return `[CQ:json,data=${foundJSON2[uuid]}]`
       }
 
@@ -107,7 +107,7 @@ export const CQ_TAG_JSON_REGEXP = /^\[CQ:json,data=(\{.*\})\]$/
  */
 export function convertCQCodeToJSON(msg: string) {
   let msgArr: string[] = []
-  msg.split(SPLIT).forEach(value => {
+  msg.split(SPLIT).forEach((value) => {
     if (value.at(0) !== '[' && value.at(value.length - 1) === ']' && msgArr.length > 0) {
       msgArr[msgArr.length - 1] += value
     } else {
@@ -115,7 +115,7 @@ export function convertCQCodeToJSON(msg: string) {
     }
   })
 
-  return msgArr.map(tagStr => {
+  return msgArr.map((tagStr) => {
     const json = CQ_TAG_JSON_REGEXP.exec(tagStr)
     if (json !== null) return { type: 'json', data: { data: json[1] } }
 
@@ -126,7 +126,7 @@ export function convertCQCodeToJSON(msg: string) {
     if (value === undefined) return { type: tagName, data: {} }
 
     const data = Object.fromEntries(
-      value.split(',').map(v => {
+      value.split(',').map((v) => {
         const index = v.indexOf('=')
         return [v.slice(0, index), v.slice(index + 1)]
       })
@@ -142,13 +142,15 @@ export function convertCQCodeToJSON(msg: string) {
 export function convertJSONToCQCode(
   json: SendMessageObject | SendMessageArray | ReceiveMessageObject | ReceiveMessageArray
 ): string {
-  const conver = (json: SendMessageObject | ReceiveMessageObject) =>
-    `[CQ:${json.type}${Object.entries(json.data)
+  const conver = (json: SendMessageObject | ReceiveMessageObject) => {
+    if (json.type === 'text') return json.data.text
+    return `[CQ:${json.type}${Object.entries(json.data)
       .map(([k, v]) => (v ? `,${k}=${v}` : ''))
       .join('')}]`
+  }
 
   if (Array.isArray(json)) {
-    return json.map(item => conver(item)).join('')
+    return json.map((item) => conver(item)).join('')
   } else {
     return conver(json)
   }

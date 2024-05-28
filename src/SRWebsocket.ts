@@ -1,6 +1,5 @@
 import type {
   APIRequest,
-  APISuccessResponse,
   EventHandle,
   ResponseHandler,
   SRWebsocketOptions,
@@ -9,8 +8,8 @@ import type {
   WSSendReturn
 } from './Interfaces.js'
 
-import WebSocket, { ClientOptions, Data } from 'ws'
 import { randomUUID } from 'crypto'
+import WebSocket, { ClientOptions, Data } from 'ws'
 import { SREventBus } from './SREventBus.js'
 import {
   CQCodeUnescape,
@@ -107,7 +106,7 @@ export class SRWebsocket {
         })
         this.eventSocket = undefined
       })
-      .on('message', data => {
+      .on('message', (data) => {
         this.#eventMessage(data)
       })
       .on('error', (data: any) => {
@@ -130,7 +129,7 @@ export class SRWebsocket {
         })
         this.apiSocket = undefined
       })
-      .on('message', data => {
+      .on('message', (data) => {
         this.#apiMessage(data)
       })
       .on('error', (data: any) => {
