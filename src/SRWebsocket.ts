@@ -649,11 +649,12 @@ export class SRWebsocket {
   }
 
   handle_quick_operation_async(params: {
+    self_id: number
     context: SocketHandle['message']
     operation: WSSendParam['.handle_quick_operation_async']['operation']
   }) {
     return this.send('.handle_quick_operation_async', {
-      self_id: this.eventBus.status.self.user_id,
+      self_id: params.self_id ?? this.eventBus.status.self.user_id,
       context: params.context,
       operation: params.operation
     })
